@@ -6,8 +6,8 @@ namespace TaskTracker.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/v1/task")]
-public class TaskController([FromServices] ITaskService taskService) : ControllerBase
+[Route("api/v1/user")]
+public class UserController([FromServices] IUserService userService) : ControllerBase
 {
 
 }
