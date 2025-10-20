@@ -1,11 +1,11 @@
-﻿using TaskTracker.Bll.Services.Interfaces;
-using Task = TaskTracker.Bll.Models.Task;
+﻿using TaskTracker.Dal.Models;
+using TaskTracker.Dal.Repositories.Interfaces;
 
-namespace TaskTracker.Bll.Services;
+namespace TaskTracker.Dal.Repositories;
 
-public class TaskService : ITaskService
+public class TaskRepository : ITaskRepository
 {
-    public Task<bool> AddTask(Task task, CancellationToken token)
+    public Task<bool> AddTask(DbTask task, CancellationToken token)
     {
         throw new NotImplementedException();
     }
@@ -20,17 +20,17 @@ public class TaskService : ITaskService
         throw new NotImplementedException();
     }
 
-    public Task<Task> GetTask(int taskId, CancellationToken token)
+    public Task<DbTask> GetTask(int taskId, CancellationToken token)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Task[]> GetTeammateTasks(int TeammateId, CancellationToken token)
+    public Task<DbTask[]> GetTeammateTasks(int TeammateId, CancellationToken token)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateTask(Task task, CancellationToken token)
+    public Task<bool> UpdateTask(DbTask task, CancellationToken token)
     {
         throw new NotImplementedException();
     }

@@ -3,7 +3,7 @@ using TaskTracker.Bll.Services.Interfaces;
 
 namespace TaskTracker.Bll.Services;
 
-public class ProjectService : IProjectService
+public class ProjectService: IProjectService
 {
     public Task<bool> AddProject(Project project, CancellationToken token)
     {

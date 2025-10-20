@@ -5,8 +5,8 @@ using TableAttribute = Supabase.Postgrest.Attributes.TableAttribute;
 
 namespace TaskTracker.Dal.Models;
 
-[Table("team_members")]
-public class DbTeamMember : BaseModel
+[Table("teammates")]
+public class DbTeammate : BaseModel
 {
     [PrimaryKey("id")]
     public int Id { get; set; }
@@ -18,7 +18,7 @@ public class DbTeamMember : BaseModel
     public int TeamId { get; set; }
 
     [Column("role_id")]
-    public int RoleId { get; set; }
+    public int Role { get; set; }
 
     [Column("joined_at")]
     public DateTime JoinedAt { get; set; }

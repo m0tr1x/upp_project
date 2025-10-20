@@ -8,11 +8,11 @@ public interface ITaskService
 
     Task<Task> GetTask(int taskId, CancellationToken token);
 
-    Task<Task[]> GetTeamMemberTasks(int teamMemberId, CancellationToken token);
+    Task<Task[]> GetTeammateTasks(int TeammateId, CancellationToken token);
 
     Task<bool> UpdateTask(Task task, CancellationToken token);
 
     Task<bool> CloseTask(int taskId, CancellationToken token);
 
-    Task<bool> AssingOnTeamMember(int taskId, CancellationToken token);
+    Task<bool> AssingOnTeammate(int taskId, CancellationToken token);
 }

@@ -12,7 +12,7 @@ public interface ITeamService
 
     Task<bool> CloseTeam(int teamId, CancellationToken token);
 
-    Task<bool> AddMemberForTeam(int teamId, int userId, CancellationToken token);
+    Task<bool> AddTeammateForTeam(int teamId, int userId, CancellationToken token);
 
-    Task<bool> DeleteMemberFromTeam(int teamId, int userId, CancellationToken token);
+    Task<bool> DeleteTeammateFromTeam(int teamId, int userId, CancellationToken token);
 }

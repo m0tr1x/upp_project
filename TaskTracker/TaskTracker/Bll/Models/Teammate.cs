@@ -1,6 +1,6 @@
 ﻿namespace TaskTracker.Bll.Models;
 
-public class TeamMember
+public class Teammate
 {
     public int Id { get; set; }
 
@@ -8,7 +8,14 @@ public class TeamMember
 
     public int TeamId { get; set; }
 
-    public int RoleId { get; set; }
+    public Role Role { get; set; }
 
     public DateTime JoinedAt { get; set; }
+}
+
+public enum Role
+{
+    Admin,
+    Teammate,
+    Viewer
 }

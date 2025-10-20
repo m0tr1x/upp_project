@@ -1,16 +1,15 @@
 ﻿using Supabase;
+using TaskTracker.Bll.Services;
+using TaskTracker.Bll.Services.Interfaces;
+using TaskTracker.Dal.Repositories;
+using TaskTracker.Dal.Repositories.Interfaces;
 using TaskTracker.Infrastructure.Middleware;
 
 namespace TaskTracker;
 
-internal class Startup
+internal class Startup(IConfiguration configuration)
 {
-    public IConfiguration Configuration { get; }
-
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
+    public IConfiguration Configuration { get; } = configuration;
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -65,11 +64,20 @@ internal class Startup
 
     public void AddBllServices(IServiceCollection services)
     {
-
+        services.AddScoped<ITeamService, TeamService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ITaskService, TaskService>();
+        services.AddScoped<IProjectService, ProjectService>();
     }
 
     public void AddDal(IServiceCollection services)
     {
+        services.AddScoped<ITeamRepository, TeamRepository>();
+        services.AddScoped<ITeammateRepository, TeammateRepository>();
+        services.AddScoped<ITaskRepository, TaskRepository>();
+        services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+
         var options = new SupabaseOptions
         {
             AutoRefreshToken = true,
