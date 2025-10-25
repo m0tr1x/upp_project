@@ -1,27 +1,54 @@
-﻿using TaskTracker.Dal.Models;
+﻿using Supabase;
+using TaskTracker.Dal.Models;
 using TaskTracker.Dal.Repositories.Interfaces;
 
 namespace TaskTracker.Dal.Repositories;
 
 public class TeammateRepository : ITeammateRepository
 {
-    public Task<bool> AddTeammate(DbTeammate team, CancellationToken token)
+    private readonly Client _client;
+
+    public TeammateRepository(Client client)
     {
-        throw new NotImplementedException();
+        _client = client;
     }
 
-    public Task<bool> Deactivate(int teamId, CancellationToken token)
+    public async Task<bool> AddTeammateAsync(DbTeammate teammate, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var response = await _client
+            .From<DbTeammate>()
+            .Insert(teammate, cancellationToken: token);
+
+        return response.Models.Count > 0;
     }
 
-    public Task<DbTeam> GetTeammate(int id, CancellationToken token)
+    public async Task<bool> DeactivateAsync(int teammateId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        await _client
+            .From<DbTeammate>()
+            .Where(t => t.Id == teammateId)
+            .Delete(cancellationToken: token);
+
+        return true;
     }
 
-    public Task<bool> UpdateTeammate(DbTeammate team, CancellationToken token)
+    public async Task<DbTeammate?> GetTeammateAsync(int id, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var response = await _client
+            .From<DbTeammate>()
+            .Where(t => t.Id == id)
+            .Single(cancellationToken: token);
+
+        return response ?? null;
+    }
+
+    public async Task<bool> UpdateTeammateAsync(DbTeammate teammate, CancellationToken token)
+    {
+        var response = await _client
+            .From<DbTeammate>()
+            .Where(t => t.Id == teammate.Id)
+            .Update(teammate, cancellationToken: token);
+
+        return response.Models.Count > 0;
     }
 }

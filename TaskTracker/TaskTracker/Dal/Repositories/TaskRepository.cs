@@ -1,37 +1,89 @@
-﻿using TaskTracker.Dal.Models;
+﻿using Supabase;
+using TaskTracker.Dal.Models;
 using TaskTracker.Dal.Repositories.Interfaces;
+using TaskStatus = TaskTracker.Bll.Models.TaskStatus;
 
 namespace TaskTracker.Dal.Repositories;
 
 public class TaskRepository : ITaskRepository
 {
-    public Task<bool> AddTask(DbTask task, CancellationToken token)
+    private readonly Client _client;
+
+    public TaskRepository(Client client)
     {
-        throw new NotImplementedException();
+        _client = client;
     }
 
-    public Task<bool> AssingOnTeammate(int taskId, CancellationToken token)
+    public async Task<bool> AddTaskAsync(DbTask task, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var response = await _client
+            .From<DbTask>()
+            .Insert(task, cancellationToken: token);
+
+        return response.Models.Count > 0;
     }
 
-    public Task<bool> CloseTask(int taskId, CancellationToken token)
+    public async Task<bool> AssingOnTeammateAsync(int taskId, int assigneeId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var updatePayload = new DbTask
+        {
+            Id = taskId,
+            AssigneeId = assigneeId,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        var response = await _client
+            .From<DbTask>()
+            .Where(t => t.Id == taskId)
+            .Update(updatePayload, cancellationToken: token);
+
+        return response.Models.Count > 0;
     }
 
-    public Task<DbTask> GetTask(int taskId, CancellationToken token)
+    public async Task<bool> CloseTaskAsync(int taskId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var closePayload = new DbTask
+        {
+            Id = taskId,
+            Status = (int)TaskStatus.Done,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        var response = await _client
+            .From<DbTask>()
+            .Where(t => t.Id == taskId)
+            .Update(closePayload, cancellationToken: token);
+
+        return response.Models.Count > 0;
     }
 
-    public Task<DbTask[]> GetTeammateTasks(int TeammateId, CancellationToken token)
+    public async Task<DbTask?> GetTaskAsync(int taskId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var response = await _client
+            .From<DbTask>()
+            .Where(t => t.Id == taskId)
+            .Single(cancellationToken: token);
+
+        return response ?? null;
     }
 
-    public Task<bool> UpdateTask(DbTask task, CancellationToken token)
+    public async Task<IEnumerable<DbTask>> GetTeammateTasksAsync(int teammateId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var response = await _client
+            .From<DbTask>()
+            .Where(t => t.AssigneeId == teammateId)
+            .Get(cancellationToken: token);
+
+        return response.Models;
+    }
+
+    public async Task<bool> UpdateTaskAsync(DbTask task, CancellationToken token)
+    {
+        var response = await _client
+            .From<DbTask>()
+            .Where(t => t.Id == task.Id)
+            .Update(task, cancellationToken: token);
+
+        return response.Models.Count > 0;
     }
 }

@@ -1,27 +1,63 @@
-﻿using TaskTracker.Dal.Models;
+﻿using Supabase;
+using TaskTracker.Dal.Models;
 using TaskTracker.Dal.Repositories.Interfaces;
 
 namespace TaskTracker.Dal.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    public Task<bool> AddUser(DbUser user, CancellationToken token)
+    private readonly Client _client;
+
+    public UserRepository(Client client)
     {
-        throw new NotImplementedException();
+        _client = client;
     }
 
-    public Task<bool> DeleteUser(int userId, CancellationToken token)
+    public async Task<bool> AddUserAsync(DbUser user, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var response = await _client
+            .From<DbUser>()
+            .Insert(user, cancellationToken: token);
+
+        return response.Models.Count > 0;
     }
 
-    public Task<DbUser> GetUser(int userId, CancellationToken token)
+    public async Task<bool> DeleteUserAsync(int userId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        await _client
+            .From<DbUser>()
+            .Where(u => u.Id == userId)
+            .Delete(cancellationToken: token);
+
+        return true;
     }
 
-    public Task<bool> UpdateUser(DbUser user, CancellationToken token)
+    public async Task<DbUser?> GetUserAsync(int userId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var response = await _client
+            .From<DbUser>()
+            .Where(u => u.Id == userId)
+            .Single(cancellationToken: token);
+
+        return response ?? null;
+    }
+
+    public async Task<bool> UpdateUserAsync(DbUser user, CancellationToken token)
+    {
+        var response = await _client
+            .From<DbUser>()
+            .Where(u => u.Id == user.Id)
+            .Update(user, cancellationToken: token);
+
+        return response.Models.Count > 0;
+    }
+    public async Task<DbUser?> GetUserByEmailAsync(string email, CancellationToken token)
+    {
+        var response = await _client
+            .From<DbUser>()
+            .Where(u => u.Email == email)
+            .Single(cancellationToken: token);
+
+        return response ?? null;
     }
 }

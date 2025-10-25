@@ -4,11 +4,11 @@ namespace TaskTracker.Dal.Repositories.Interfaces;
 
 public interface IProjectRepository
 {
-    Task<bool> AddProject(DbProject project, CancellationToken token);
+    Task<bool> AddProjectAsync(DbProject project, CancellationToken token);
 
-    Task<bool> UpdateProject(DbProject project, CancellationToken token);
+    Task<bool> UpdateProjectAsync(DbProject project, CancellationToken token);
 
-    Task<DbProject> GetProject(int projectId, CancellationToken token);
+    Task<DbProject?> GetProjectAsync(int projectId, CancellationToken token);
 
-    Task<bool> CloseProject(int projectId, CancellationToken token);
+    Task<bool> CloseProjectAsync(int projectId, CancellationToken token);
 }

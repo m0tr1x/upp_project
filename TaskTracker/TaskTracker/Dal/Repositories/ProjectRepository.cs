@@ -1,27 +1,61 @@
-﻿using TaskTracker.Dal.Models;
+﻿using Supabase;
+using TaskTracker.Dal.Models;
 using TaskTracker.Dal.Repositories.Interfaces;
+using TaskStatus = TaskTracker.Bll.Models.TaskStatus;
 
 namespace TaskTracker.Dal.Repositories;
 
 public class ProjectRepository : IProjectRepository
 {
-    public Task<bool> AddProject(DbProject project, CancellationToken token)
+    private readonly Client _client;
+
+    public ProjectRepository(Client client)
     {
-        throw new NotImplementedException();
+        _client = client;
     }
 
-    public Task<bool> CloseProject(int projectId, CancellationToken token)
+    public async Task<bool> AddProjectAsync(DbProject project, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var response = await _client
+            .From<DbProject>()
+            .Insert(project, cancellationToken: token);
+
+        return response.Models.Count > 0;
     }
 
-    public Task<DbProject> GetProject(int projectId, CancellationToken token)
+    public async Task<bool> CloseProjectAsync(int projectId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var updatePayload = new DbProject
+        {
+            Id = projectId,
+            Status = (int)TaskStatus.Done,
+        };
+
+        var response = await _client
+            .From<DbProject>()
+            .Where(p => p.Id == projectId)
+            .Update(updatePayload, cancellationToken: token);
+
+        return response.Models.Count > 0;
     }
 
-    public Task<bool> UpdateProject(DbProject project, CancellationToken token)
+    public async Task<DbProject?> GetProjectAsync(int projectId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var response = await _client
+            .From<DbProject>()
+            .Where(p => p.Id == projectId)
+            .Single(cancellationToken: token);
+
+        return response ?? null;
+    }
+
+    public async Task<bool> UpdateProjectAsync(DbProject project, CancellationToken token)
+    {
+        var response = await _client
+            .From<DbProject>()
+            .Where(p => p.Id == project.Id)
+            .Update(project, cancellationToken: token);
+
+        return response.Models.Count > 0;
     }
 }

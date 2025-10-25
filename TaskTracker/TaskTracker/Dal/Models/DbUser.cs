@@ -12,10 +12,10 @@ public class DbUser : BaseModel
     public int Id { get; set; }
 
     [Column("email")]
-    public required string Email { get; set; }
+    public string Email { get; set; } = null!;
 
     [Column("password_hash")]
-    public required string PasswordHash { get; set; }
+    public string PasswordHash { get; set; } = null!;
 
     [Column("first_name")]
     public string? FirstName { get; set; }

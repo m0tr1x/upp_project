@@ -1,27 +1,54 @@
-﻿using TaskTracker.Dal.Models;
+﻿using Supabase;
+using TaskTracker.Dal.Models;
 using TaskTracker.Dal.Repositories.Interfaces;
 
 namespace TaskTracker.Dal.Repositories;
 
 public class TeamRepository : ITeamRepository
 {
-    public Task<bool> AddTeam(DbTeam team, CancellationToken token)
+    private readonly Client _client;
+
+    public TeamRepository(Client client)
     {
-        throw new NotImplementedException();
+        _client = client;
     }
 
-    public Task<bool> CloseTeam(int teamId, CancellationToken token)
+    public async Task<bool> AddTeamAsync(DbTeam team, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var response = await _client
+            .From<DbTeam>()
+            .Insert(team, cancellationToken: token);
+
+        return response.Models.Count > 0;
     }
 
-    public Task<bool> UpdateTeam(DbTeam team, CancellationToken token)
+    public async Task<bool> CloseTeamAsync(int teamId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        await _client
+            .From<DbTeam>()
+            .Where(t => t.Id == teamId)
+            .Delete(cancellationToken: token);
+
+        return true;
     }
 
-    Task<DbTeam> ITeamRepository.GetTeam(int teamId, CancellationToken token)
+    public async Task<bool> UpdateTeamAsync(DbTeam team, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var response = await _client
+            .From<DbTeam>()
+            .Where(t => t.Id == team.Id)
+            .Update(team, cancellationToken: token);
+
+        return response.Models.Count > 0;
+    }
+
+    public async Task<DbTeam?> GetTeamAsync(int teamId, CancellationToken token)
+    {
+        var response = await _client
+            .From<DbTeam>()
+            .Where(t => t.Id == teamId)
+            .Single(cancellationToken: token);
+
+        return response ?? null;
     }
 }

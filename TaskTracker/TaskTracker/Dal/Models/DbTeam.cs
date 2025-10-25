@@ -12,7 +12,7 @@ public class DbTeam : BaseModel
     public int Id { get; set; }
 
     [Column("name")]
-    public required string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     [Column("description")]
     public string? Description { get; set; }

@@ -3,7 +3,9 @@ using TaskTracker.Bll.Services;
 using TaskTracker.Bll.Services.Interfaces;
 using TaskTracker.Dal.Repositories;
 using TaskTracker.Dal.Repositories.Interfaces;
+using TaskTracker.Infrastructure.AuthHelper;
 using TaskTracker.Infrastructure.Middleware;
+using TaskTracker.Infrastructure.Swagger;
 
 namespace TaskTracker;
 
@@ -16,6 +18,7 @@ internal class Startup(IConfiguration configuration)
         services.AddControllers();
 
         services.AddMvc();
+        services.AddSwaggerDocumentation();
 
         services
             .AddCors(options =>
@@ -31,6 +34,9 @@ internal class Startup(IConfiguration configuration)
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+
+        services.AddJwt();
+        services.AddAuthorization();
 
         AddDal(services);
         AddBllServices(services);
@@ -77,6 +83,7 @@ internal class Startup(IConfiguration configuration)
         services.AddScoped<ITaskRepository, TaskRepository>();
         services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAuthService, AuthService>();
 
         var options = new SupabaseOptions
         {

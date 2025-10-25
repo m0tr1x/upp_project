@@ -4,15 +4,15 @@ namespace TaskTracker.Dal.Repositories.Interfaces;
 
 public interface ITaskRepository
 {
-    Task<bool> AddTask(DbTask task, CancellationToken token);
+    Task<bool> AddTaskAsync(DbTask task, CancellationToken token);
 
-    Task<DbTask> GetTask(int taskId, CancellationToken token);
+    Task<DbTask?> GetTaskAsync(int taskId, CancellationToken token);
 
-    Task<DbTask[]> GetTeammateTasks(int TeammateId, CancellationToken token);
+    Task<IEnumerable<DbTask>> GetTeammateTasksAsync(int TeammateId, CancellationToken token);
 
-    Task<bool> UpdateTask(DbTask task, CancellationToken token);
+    Task<bool> UpdateTaskAsync(DbTask task, CancellationToken token);
 
-    Task<bool> CloseTask(int taskId, CancellationToken token);
+    Task<bool> CloseTaskAsync(int taskId, CancellationToken token);
 
-    Task<bool> AssingOnTeammate(int taskId, CancellationToken token);
+    Task<bool> AssingOnTeammateAsync(int taskId, int assigneeId, CancellationToken token);
 }
