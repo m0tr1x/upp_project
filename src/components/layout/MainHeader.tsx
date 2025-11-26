@@ -79,12 +79,7 @@ const MainHeader: React.FC = () => {
         {/* Уведомления и профиль */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           
-          {/* Иконка уведомлений */}
-          <IconButton sx={{ color: 'black' }}>
-            <Badge badgeContent={3} color="error">
-              <Notifications />
-            </Badge>
-          </IconButton>
+
 
           {/* Профиль пользователя */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

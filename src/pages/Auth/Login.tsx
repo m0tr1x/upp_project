@@ -7,9 +7,7 @@ import {
   TextField,
   Button,
   Typography,
-  Checkbox,
-  FormControlLabel,
-  Divider,
+  
   Container,
   Paper,
   InputAdornment,
@@ -82,24 +80,13 @@ const Login: React.FC = () => {
       >
         {/* Заголовок - компактнее */}
         <Box textAlign="center" mb={3}>
-          <Typography 
-            variant="h4" 
-            component="h1" 
-            gutterBottom 
-            sx={{ 
-              fontWeight: 'bold',
-              fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-            }}
-          >
-            <span style={{ color: '#EDAB00' }}>Task</span>
-            <span style={{ color: 'black' }}>Tracker</span>
-          </Typography>
+    
           <Typography 
             variant="h6" 
-            color="text.secondary"
-            sx={{ fontWeight: '500' }}
+            color="black"
+            sx={{ fontWeight: '700' }}
           >
-            Вход в систему
+            Вход 
           </Typography>
         </Box>
 
@@ -113,99 +100,79 @@ const Login: React.FC = () => {
           <CardContent sx={{ p: 0 }}>
             
             {/* Поле email */}
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              margin="normal"
-              variant="outlined"
-              required
-              size="small"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Email sx={{ color: '#EDAB00', fontSize: '20px' }} />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ 
-                mb: 2,
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                  '&:hover fieldset': {
-                    borderColor: '#EDAB00',
-                  },
-                }
-              }}
-            />
+                        <TextField
+                          fullWidth
+                          label="Email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          margin="normal"
+                          variant="outlined"
+                          required
+                          size="small"
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Email sx={{ color: '#000000ff', fontSize: '20px' }} />
+                              </InputAdornment>
+                            ),
+                          }}
+                          sx={{ 
+                            mb: 2,
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 2,
+                              '&:hover fieldset': {
+                                borderColor: '#EDAB00',
+                              },
+                            }
+                          }}
+                        />
 
             {/* Поле пароля */}
-            <TextField
-              fullWidth
-              label="Пароль"
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              value={formData.password}
-              onChange={handleChange}
-              margin="normal"
-              variant="outlined"
-              required
-              size="small"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Lock sx={{ color: '#EDAB00', fontSize: '20px' }} />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={handleTogglePassword}
-                      edge="end"
-                      sx={{ color: '#EDAB00', padding: '4px' }}
-                    >
-                      {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ 
-                mb: 1,
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                  '&:hover fieldset': {
-                    borderColor: '#EDAB00',
-                  },
-                }
-              }}
-            />
+                        <TextField
+                          fullWidth
+                          label="Пароль"
+                          name="password"
+                          type={showPassword ? 'text' : 'password'}
+                          value={formData.password}
+                          onChange={handleChange}
+                          margin="normal"
+                          variant="outlined"
+                          required
+                          size="small"
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Lock sx={{ color: '#000000ff', fontSize: '20px' }} />
+                              </InputAdornment>
+                            ),
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={handleTogglePassword}
+                                  edge="end"
+                                  sx={{ color: '#000000ff', padding: '4px' }}
+                                >
+                                  {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
+                          sx={{ 
+                            mb: 2,
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 2,
+                              '&:hover fieldset': {
+                                borderColor: '#EDAB00',
+                              },
+                            }
+                          }}
+                        />
 
             {/* Запомнить меня и Забыли пароль */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-              <FormControlLabel
-                control={
-                  <Checkbox 
-                    name="rememberMe"
-                    checked={formData.rememberMe}
-                    onChange={handleChange}
-                    size="small"
-                    sx={{ 
-                      color: '#EDAB00',
-                      '&.Mui-checked': {
-                        color: '#EDAB00',
-                      },
-                    }}
-                  />
-                }
-                label={
-                  <Typography variant="body2">
-                    Запомнить меня
-                  </Typography>
-                }
-              />
+
               <Button 
                 variant="text" 
                 size="small"
@@ -247,56 +214,9 @@ const Login: React.FC = () => {
               Войти
             </Button>
 
-            {/* Разделитель */}
-            <Divider sx={{ mb: 3 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ px: 2, fontSize: '0.75rem' }}>
-                или войдите с помощью
-              </Typography>
-            </Divider>
-
-            {/* Социальные кнопки */}
-            <Box sx={{ display: 'flex', gap: 1.5, mb: 3 }}>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<Google sx={{ fontSize: '18px' }} />}
-                size="small"
-                sx={{ 
-                  py: 0.8,
-                  borderRadius: 2,
-                  borderColor: '#ddd',
-                  color: 'text.primary',
-                  textTransform: 'none',
-                  fontSize: '0.8rem',
-                  '&:hover': {
-                    borderColor: '#EDAB00',
-                    backgroundColor: 'rgba(237, 171, 0, 0.04)'
-                  }
-                }}
-              >
-                Google
-              </Button>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<GitHub sx={{ fontSize: '18px' }} />}
-                size="small"
-                sx={{ 
-                  py: 0.8,
-                  borderRadius: 2,
-                  borderColor: '#ddd',
-                  color: 'text.primary',
-                  textTransform: 'none',
-                  fontSize: '0.8rem',
-                  '&:hover': {
-                    borderColor: '#EDAB00',
-                    backgroundColor: 'rgba(237, 171, 0, 0.04)'
-                  }
-                }}
-              >
-                GitHub
-              </Button>
-            </Box>
+            
+           
+             
 
             {/* Ссылка на регистрацию */}
             <Box textAlign="center">

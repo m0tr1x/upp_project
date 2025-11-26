@@ -24,8 +24,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const menuItems = [
   { text: 'Дашборд', icon: Dashboard, path: '/dashboard' },
   { text: 'Мои задачи', icon: Task, path: '/tasks' },
-  { text: 'Проекты', icon: Folder, path: '/projects' },
-  { text: 'Доски', icon: ViewKanban, path: '/boards' },
+  { text: 'Проекты', icon: Folder, path: '/project' },
+  { text: 'Моя доска', icon: ViewKanban, path: '/myboard' },
   { text: 'Аналитика', icon: Analytics, path: '/analytics' },
   { text: 'Тайм-трекинг', icon: Timer, path: '/timer' },
   { text: 'Календарь', icon: CalendarToday, path: '/calendar' },
@@ -50,18 +50,7 @@ const Sidebar: React.FC = () => {
         overflowY: 'auto'
       }}
     >
-      {/* Заголовок меню */}
-      <Box sx={{ px: 3, py: 3 }}>
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            fontWeight: 'bold',
-            color: '#EDAB00'
-          }}
-        >
-          Навигация
-        </Typography>
-      </Box>
+      
 
       {/* Список пунктов меню */}
       <List sx={{ px: 2 }}>

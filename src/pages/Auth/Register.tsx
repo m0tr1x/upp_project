@@ -7,37 +7,29 @@ import {
   TextField,
   Button,
   Typography,
-  Checkbox,
-  FormControlLabel,
-  Divider,
   Container,
   Paper,
   InputAdornment,
   IconButton,
-  Stepper,
-  Step,
-  StepLabel
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
-import { Visibility, VisibilityOff, Email, Lock, Person, Google, GitHub } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Person, Email, Lock, Badge } from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-
-const steps = ['Основная информация', 'Дополнительные данные', 'Подтверждение'];
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    username: '',
     email: '',
     password: '',
     confirmPassword: '',
-    agreeToTerms: false,
-    company: '',
-    position: ''
+    agreeToTerms: false
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
   
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -50,18 +42,11 @@ const Register: React.FC = () => {
     }));
   };
 
-  const handleNext = () => {
-    setActiveStep((prev) => prev + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prev) => prev - 1);
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Регистрация:', formData);
     
-    // Регистрация пользователя
+    // После успешной регистрации:
     login({
       id: '1',
       firstName: formData.firstName,
@@ -69,7 +54,7 @@ const Register: React.FC = () => {
       email: formData.email
     });
     
-    navigate('/Dashboard'); // Редирект на Dashboard
+    navigate('/');
   };
 
   const handleTogglePassword = () => {
@@ -80,25 +65,66 @@ const Register: React.FC = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const getStepContent = (step: number) => {
-    switch (step) {
-      case 0:
-        return (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            {/* Имя и Фамилия */}
-            <Box sx={{ display: 'flex', gap: 2 }}>
+  return (
+    <Container 
+      component="main" 
+      maxWidth="sm" 
+      sx={{ 
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        py: 2
+      }}
+    >
+      <Paper 
+        elevation={16} 
+        sx={{ 
+          p: 4, 
+          width: '100%',
+          maxWidth: 450,
+          borderRadius: 3,
+          background: 'white',
+          boxShadow: '0 15px 40px rgba(0,0,0,0.1)'
+        }}
+      >
+        {/* Заголовок */}
+        <Box textAlign="center" mb={3}>
+          <Typography 
+            variant="h6" 
+            color="black"
+            sx={{ fontWeight: '700' }}
+          >
+            Регистрация
+          </Typography>
+        </Box>
+
+        {/* Форма регистрации */}
+        <Card 
+          component="form" 
+          onSubmit={handleSubmit} 
+          elevation={0}
+          sx={{ background: 'transparent' }}
+        >
+          <CardContent sx={{ p: 0 }}>
+            
+            
+            
+              {/* Поле имени */}
               <TextField
                 fullWidth
                 label="Имя"
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
+                margin="normal"
                 variant="outlined"
                 required
+                size="small"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Person sx={{ color: '#EDAB00' }} />
+                      <Person sx={{ color: '#000000ff', fontSize: '20px' }} />
                     </InputAdornment>
                   ),
                 }}
@@ -111,14 +137,25 @@ const Register: React.FC = () => {
                   }
                 }}
               />
+
+              {/* Поле фамилии */}
               <TextField
                 fullWidth
                 label="Фамилия"
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
+                margin="normal"
                 variant="outlined"
                 required
+                size="small"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Person sx={{ color: '#000000ff', fontSize: '20px' }} />
+                    </InputAdornment>
+                  ),
+                }}
                 sx={{ 
                   '& .MuiOutlinedInput-root': {
                     borderRadius: 2,
@@ -128,9 +165,38 @@ const Register: React.FC = () => {
                   }
                 }}
               />
-            </Box>
+            
 
-            {/* Email */}
+            {/* Поле username */}
+            <TextField
+              fullWidth
+              label="Username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              margin="normal"
+              variant="outlined"
+              required
+              size="small"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Badge sx={{ color: '#000000ff', fontSize: '20px' }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ 
+                mb: 2,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  '&:hover fieldset': {
+                    borderColor: '#EDAB00',
+                  },
+                }
+              }}
+            />
+
+            {/* Поле email */}
             <TextField
               fullWidth
               label="Email"
@@ -138,16 +204,19 @@ const Register: React.FC = () => {
               type="email"
               value={formData.email}
               onChange={handleChange}
+              margin="normal"
               variant="outlined"
               required
+              size="small"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Email sx={{ color: '#EDAB00' }} />
+                    <Email sx={{ color: '#000000ff', fontSize: '20px' }} />
                   </InputAdornment>
                 ),
               }}
               sx={{ 
+                mb: 2,
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2,
                   '&:hover fieldset': {
@@ -156,13 +225,8 @@ const Register: React.FC = () => {
                 }
               }}
             />
-          </Box>
-        );
-      
-      case 1:
-        return (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            {/* Пароль */}
+
+            {/* Поле пароля */}
             <TextField
               fullWidth
               label="Пароль"
@@ -170,12 +234,14 @@ const Register: React.FC = () => {
               type={showPassword ? 'text' : 'password'}
               value={formData.password}
               onChange={handleChange}
+              margin="normal"
               variant="outlined"
               required
+              size="small"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Lock sx={{ color: '#EDAB00' }} />
+                    <Lock sx={{ color: '#000000ff', fontSize: '20px' }} />
                   </InputAdornment>
                 ),
                 endAdornment: (
@@ -183,14 +249,15 @@ const Register: React.FC = () => {
                     <IconButton
                       onClick={handleTogglePassword}
                       edge="end"
-                      sx={{ color: '#EDAB00' }}
+                      sx={{ color: '#000000ff', padding: '4px' }}
                     >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                      {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
               sx={{ 
+                mb: 2,
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2,
                   '&:hover fieldset': {
@@ -200,20 +267,22 @@ const Register: React.FC = () => {
               }}
             />
 
-            {/* Подтверждение пароля */}
+            {/* Поле подтверждения пароля */}
             <TextField
               fullWidth
-              label="Подтвердите пароль"
+              label="Повторите пароль"
               name="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
               value={formData.confirmPassword}
               onChange={handleChange}
+              margin="normal"
               variant="outlined"
               required
+              size="small"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Lock sx={{ color: '#EDAB00' }} />
+                    <Lock sx={{ color: '#000000ff', fontSize: '20px' }} />
                   </InputAdornment>
                 ),
                 endAdornment: (
@@ -221,14 +290,15 @@ const Register: React.FC = () => {
                     <IconButton
                       onClick={handleToggleConfirmPassword}
                       edge="end"
-                      sx={{ color: '#EDAB00' }}
+                      sx={{ color: '#000000ff', padding: '4px' }}
                     >
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      {showConfirmPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
               sx={{ 
+                mb: 2,
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2,
                   '&:hover fieldset': {
@@ -238,69 +308,15 @@ const Register: React.FC = () => {
               }}
             />
 
-            {/* Компания и должность */}
-            <TextField
-              fullWidth
-              label="Компания (необязательно)"
-              name="company"
-              value={formData.company}
-              onChange={handleChange}
-              variant="outlined"
-              sx={{ 
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                  '&:hover fieldset': {
-                    borderColor: '#EDAB00',
-                  },
-                }
-              }}
-            />
-            <TextField
-              fullWidth
-              label="Должность (необязательно)"
-              name="position"
-              value={formData.position}
-              onChange={handleChange}
-              variant="outlined"
-              sx={{ 
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                  '&:hover fieldset': {
-                    borderColor: '#EDAB00',
-                  },
-                }
-              }}
-            />
-          </Box>
-        );
-      
-      case 2:
-        return (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            <Typography variant="h6" color="text.primary" textAlign="center">
-              Проверьте ваши данные
-            </Typography>
-            
-            <Box sx={{ 
-              p: 2, 
-              border: '2px solid', 
-              borderColor: '#EDAB00', 
-              borderRadius: 2,
-              backgroundColor: 'rgba(237, 171, 0, 0.05)'
-            }}>
-              <Typography variant="body2"><strong>Имя:</strong> {formData.firstName} {formData.lastName}</Typography>
-              <Typography variant="body2"><strong>Email:</strong> {formData.email}</Typography>
-              {formData.company && <Typography variant="body2"><strong>Компания:</strong> {formData.company}</Typography>}
-              {formData.position && <Typography variant="body2"><strong>Должность:</strong> {formData.position}</Typography>}
-            </Box>
-
+            {/* Согласие с правилами */}
             <FormControlLabel
               control={
-                <Checkbox 
+                <Checkbox
                   name="agreeToTerms"
                   checked={formData.agreeToTerms}
                   onChange={handleChange}
-                  sx={{ 
+                  required
+                  sx={{
                     color: '#EDAB00',
                     '&.Mui-checked': {
                       color: '#EDAB00',
@@ -308,230 +324,49 @@ const Register: React.FC = () => {
                   }}
                 />
               }
-              label={
-                <Typography variant="body2">
-                  Я соглашаюсь с {' '}
-                  <Button variant="text" sx={{ color: '#EDAB00', p: 0, minWidth: 'auto', fontSize: '0.875rem' }}>
-                    условиями использования
-                  </Button>
-                  {' '} и {' '}
-                  <Button variant="text" sx={{ color: '#EDAB00', p: 0, minWidth: 'auto', fontSize: '0.875rem' }}>
-                    политикой конфиденциальности
-                  </Button>
-                </Typography>
-              }
-            />
-          </Box>
-        );
-      
-      default:
-        return 'Неизвестный шаг';
-    }
-  };
-
-  return (
-    <Container 
-      component="main" 
-      maxWidth="sm" 
-      sx={{ 
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        py: 3
-      }}
-    >
-      <Paper 
-        elevation={24} 
-        sx={{ 
-          p: 4, 
-          width: '100%',
-          borderRadius: 3,
-          background: 'white',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.1)'
-        }}
-      >
-        {/* Заголовок - уменьшили отступы */}
-        <Box textAlign="center" mb={3}>
-          <Typography 
-            variant="h4" 
-            component="h1" 
-            gutterBottom 
-            sx={{ 
-              fontWeight: 'bold',
-              fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-            }}
-          >
-            <span style={{ color: '#EDAB00' }}>Task</span>
-            <span style={{ color: 'black' }}>Tracker</span>
-          </Typography>
-          <Typography 
-            variant="h6" 
-            color="text.secondary"
-            sx={{ fontWeight: '500' }}
-          >
-            Создание аккаунта
-          </Typography>
-        </Box>
-
-        {/* Степпер - сделали компактнее */}
-        <Stepper 
-          activeStep={activeStep} 
-          sx={{ 
-            mb: 3,
-            '& .MuiStepLabel-root': {
-              padding: '4px'
-            },
-            '& .MuiStepLabel-label': {
-              fontSize: '0.75rem',
-              fontWeight: '500'
-            }
-          }}
-        >
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-
-        {/* Форма регистрации */}
-        <Card 
-          component="form" 
-          onSubmit={handleSubmit} 
-          elevation={0}
-          sx={{ background: 'transparent' }}
-        >
-          <CardContent sx={{ p: 0 }}>
-            
-            {getStepContent(activeStep)}
-
-            {/* Кнопки навигации */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-              <Button
-                onClick={handleBack}
-                disabled={activeStep === 0}
-                sx={{
-                  color: '#EDAB00',
-                  fontWeight: '500',
-                  textTransform: 'none',
+              label="Я согласен со всеми правилами"
+              sx={{ 
+                mb: 3,
+                '& .MuiTypography-root': {
                   fontSize: '0.875rem'
-                }}
-              >
-                Назад
-              </Button>
-              
-              {activeStep === steps.length - 1 ? (
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={!formData.agreeToTerms}
-                  sx={{
-                    py: 1,
-                    px: 3,
-                    borderRadius: 2,
-                    backgroundColor: '#EDAB00',
-                    color: 'white',
-                    fontWeight: 'bold',
-                    fontSize: '0.875rem',
-                    textTransform: 'none',
-                    boxShadow: '0 4px 14px 0 rgba(237, 171, 0, 0.3)',
-                    '&:hover': {
-                      backgroundColor: '#d69b00',
-                      boxShadow: '0 6px 20px rgba(237, 171, 0, 0.4)',
-                    },
-                    '&:disabled': {
-                      backgroundColor: 'grey.300',
-                      color: 'grey.500'
-                    }
-                  }}
-                >
-                  Завершить регистрацию
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleNext}
-                  variant="contained"
-                  sx={{
-                    py: 1,
-                    px: 3,
-                    borderRadius: 2,
-                    backgroundColor: '#EDAB00',
-                    color: 'white',
-                    fontWeight: 'bold',
-                    fontSize: '0.875rem',
-                    textTransform: 'none',
-                    boxShadow: '0 4px 14px 0 rgba(237, 171, 0, 0.3)',
-                    '&:hover': {
-                      backgroundColor: '#d69b00',
-                      boxShadow: '0 6px 20px rgba(237, 171, 0, 0.4)',
-                    }
-                  }}
-                >
-                  Далее
-                </Button>
-              )}
-            </Box>
+                }
+              }}
+            />
 
-            {/* Разделитель для первого шага */}
-            {activeStep === 0 && (
-              <>
-                <Divider sx={{ my: 3 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ px: 2, fontSize: '0.75rem' }}>
-                    или зарегистрируйтесь с помощью
-                  </Typography>
-                </Divider>
-
-                {/* Социальные кнопки */}
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    startIcon={<Google />}
-                    sx={{ 
-                      py: 1,
-                      borderRadius: 2,
-                      borderColor: '#ddd',
-                      color: 'text.primary',
-                      textTransform: 'none',
-                      fontSize: '0.875rem',
-                      '&:hover': {
-                        borderColor: '#EDAB00',
-                        backgroundColor: 'rgba(237, 171, 0, 0.04)'
-                      }
-                    }}
-                  >
-                    Google
-                  </Button>
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    startIcon={<GitHub />}
-                    sx={{ 
-                      py: 1,
-                      borderRadius: 2,
-                      borderColor: '#ddd',
-                      color: 'text.primary',
-                      textTransform: 'none',
-                      fontSize: '0.875rem',
-                      '&:hover': {
-                        borderColor: '#EDAB00',
-                        backgroundColor: 'rgba(237, 171, 0, 0.04)'
-                      }
-                    }}
-                  >
-                    GitHub
-                  </Button>
-                </Box>
-              </>
-            )}
+            {/* Кнопка регистрации */}
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              onClick={() => navigate('/Dashboard')}
+              size="medium"
+              sx={{
+                py: 1,
+                mb: 3,
+                borderRadius: 2,
+                backgroundColor: '#EDAB00',
+                color: 'white',
+                fontWeight: 'bold',
+                fontSize: '0.9rem',
+                textTransform: 'none',
+                boxShadow: '0 3px 10px 0 rgba(237, 171, 0, 0.3)',
+                '&:hover': {
+                  backgroundColor: '#d69b00',
+                  boxShadow: '0 5px 15px rgba(237, 171, 0, 0.4)',
+                },
+                transition: 'all 0.2s ease'
+              }}
+            >
+              Зарегистрироваться
+            </Button>
 
             {/* Ссылка на вход */}
-            <Box textAlign="center" mt={3}>
+            <Box textAlign="center">
               <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
-                Уже есть аккаунт?{' '}
+                У вас уже есть аккаунт?{' '}
                 <Button 
                   variant="text" 
+                  size="small"
                   sx={{ 
                     color: '#EDAB00',
                     textTransform: 'none',
@@ -543,7 +378,7 @@ const Register: React.FC = () => {
                   }}
                   onClick={() => navigate('/login')}
                 >
-                  Войдите
+                  Войти
                 </Button>
               </Typography>
             </Box>

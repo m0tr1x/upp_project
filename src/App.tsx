@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './contexts/AuthContext';
+import Tasks from './pages/Tasks';
 
 // Layouts
 import MainLayout from './components/layout/MainLayout';
@@ -14,6 +15,9 @@ import Main from './pages/Main';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import Dashboard from './pages/Dashboard';
+import TaskPage from './pages/TaskPage'; 
+import MyBoard from './pages/MyBoard';
+import Project from './pages/Project';
 
 const theme = createTheme({
   palette: {
@@ -47,6 +51,32 @@ function App() {
                 <Dashboard />
               </MainLayout>
             } />
+
+            <Route path="/tasks" element={
+            <MainLayout>
+              <Tasks />
+            </MainLayout>
+          } />
+
+            <Route path="/myboard" element={
+            <MainLayout>
+              <MyBoard />
+            </MainLayout>
+          } />
+            
+            {/* Страница задачи - MainLayout с MainHeader и Sidebar */}
+            <Route path="/task/:taskId" element={
+              <MainLayout>
+                <TaskPage />
+              </MainLayout>
+            } />
+
+            <Route path="/project" element={
+            <MainLayout>
+              <Project />
+            </MainLayout>
+          } />
+            
           </Routes>
         </Router>
       </AuthProvider>
