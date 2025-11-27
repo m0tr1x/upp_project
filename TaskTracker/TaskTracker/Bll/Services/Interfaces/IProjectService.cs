@@ -1,10 +1,13 @@
 ﻿using TaskTracker.Bll.Models;
+using TaskTracker.Models.Project;
 
 namespace TaskTracker.Bll.Services.Interfaces;
 
 public interface IProjectService
 {
-    Task<bool> AddProject(Project project, CancellationToken token);
+    Task<int> AddProject(Project project, CancellationToken token);
+
+    Task<bool> UpdateProject(V1CreateProjectRequest project, CancellationToken token);
 
     Task<Project> GetProject(int projectId, CancellationToken token);
 

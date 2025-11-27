@@ -11,7 +11,7 @@ public class DbProject : BaseModel
     public int Id { get; set; }
 
     [Column("name")]
-    public string Name { get; set; } = null!;
+    public string? Name { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
@@ -29,7 +29,7 @@ public class DbProject : BaseModel
     public int TeamId { get; set; }
 
     [Column("created_at")]
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     [Column("created_by_user_id")]
     public int CreatedByUserId { get; set; }

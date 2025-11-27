@@ -5,14 +5,9 @@ using TaskStatus = TaskTracker.Bll.Models.TaskStatus;
 
 namespace TaskTracker.Dal.Repositories;
 
-public class ProjectRepository : IProjectRepository
+public class ProjectRepository(Client client) : IProjectRepository
 {
-    private readonly Client _client;
-
-    public ProjectRepository(Client client)
-    {
-        _client = client;
-    }
+    private readonly Client _client = client;
 
     public async Task<bool> AddProjectAsync(DbProject project, CancellationToken token)
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.Data;
-using TaskTracker.Bll.DTOs;
-using LoginRequest = TaskTracker.Bll.DTOs.LoginRequest;
-using RegisterRequest = TaskTracker.Bll.DTOs.RegisterRequest;
+using TaskTracker.Models.Auth;
+using LoginRequest = TaskTracker.Models.Auth.LoginRequest;
+using RegisterRequest = TaskTracker.Models.Auth.RegisterRequest;
 
 namespace TaskTracker.Bll.Services.Interfaces
 {

@@ -1,6 +1,8 @@
-﻿namespace TaskTracker.Bll.Models;
+﻿using TaskTracker.Bll.Models;
 
-public class Project
+namespace TaskTracker.Models.Project;
+
+public class V1GetProjectRequest
 {
     public int Id { get; set; }
 

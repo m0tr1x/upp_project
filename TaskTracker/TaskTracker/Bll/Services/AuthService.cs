@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
-using TaskTracker.Bll.DTOs;
 using TaskTracker.Bll.Services.Interfaces;
 using TaskTracker.Dal.Models;
 using TaskTracker.Dal.Repositories.Interfaces;
 using TaskTracker.Infrastructure.AuthHelper;
+using TaskTracker.Models.Auth;
 
 namespace TaskTracker.Bll.Services;
 

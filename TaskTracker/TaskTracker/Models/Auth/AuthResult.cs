@@ -1,4 +1,4 @@
-﻿namespace TaskTracker.Bll.DTOs;
+﻿namespace TaskTracker.Models.Auth;
 
 public class AuthResult
 {

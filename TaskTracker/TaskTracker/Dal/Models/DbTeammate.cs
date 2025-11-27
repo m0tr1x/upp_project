@@ -17,6 +17,9 @@ public class DbTeammate : BaseModel
     [Column("team_id")]
     public int TeamId { get; set; }
 
+    [Column("role")]
+    public int Role { get; set; }
+
     [Column("joined_at")]
     public DateTime JoinedAt { get; set; }
 }

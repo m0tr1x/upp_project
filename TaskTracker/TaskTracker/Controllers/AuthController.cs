@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TaskTracker.Bll.DTOs;
 using TaskTracker.Bll.Services.Interfaces;
+using TaskTracker.Models.Auth;
 
 namespace TaskTracker.Controllers
 {
