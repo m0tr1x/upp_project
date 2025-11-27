@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TaskTracker.Bll.DTOs
-{
-    public class LoginRequest
-    {
-        [Required(AllowEmptyStrings = false)]
-        public string Email { get; set; } = null!;
+namespace TaskTracker.Bll.DTOs;
 
-        [Required(AllowEmptyStrings = false)]
-        public string Password { get; set; } = null!;
-    }
+public class LoginRequest
+{
+    [Required(AllowEmptyStrings = false)]
+    public string Email { get; set; } = null!;
+
+    [Required(AllowEmptyStrings = false)]
+    public string Password { get; set; } = null!;
 }
