@@ -5,7 +5,7 @@ namespace TaskTracker.Bll.Services;
 
 public class TaskService : ITaskService
 {
-    public Task<bool> AddTask(Task task, CancellationToken token)
+    public Task<int> AddTask(Task task, CancellationToken token)
     {
         throw new NotImplementedException();
     }
@@ -25,7 +25,7 @@ public class TaskService : ITaskService
         throw new NotImplementedException();
     }
 
-    public Task<Task[]> GetTeammateTasks(int TeammateId, CancellationToken token)
+    public Task<Task[]> GetTeammateTasks(int teammateId, CancellationToken token)
     {
         throw new NotImplementedException();
     }

@@ -4,11 +4,11 @@ namespace TaskTracker.Bll.Services.Interfaces;
 
 public interface ITaskService
 {
-    Task<bool> AddTask(Task task, CancellationToken token);
+    Task<int> AddTask(Task task, CancellationToken token);
 
     Task<Task> GetTask(int taskId, CancellationToken token);
 
-    Task<Task[]> GetTeammateTasks(int TeammateId, CancellationToken token);
+    Task<Task[]> GetTeammateTasks(int teammateId, CancellationToken token);
 
     Task<bool> UpdateTask(Task task, CancellationToken token);
 

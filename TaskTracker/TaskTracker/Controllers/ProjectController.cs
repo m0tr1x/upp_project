@@ -27,27 +27,27 @@ public class ProjectController([FromServices] IProjectService projectService) : 
         });
     }
 
-    [HttpPost("update")]
+    [HttpPut("update")]
     [SwaggerOperation("Обновление проекта")]
     public async Task<bool> V1UpdateProject([FromBody] V1CreateProjectRequest request, CancellationToken token)
     {
         return await projectService.UpdateProject(request, token);
     }
 
-    [HttpPost("close")]
+    [HttpDelete("close")]
     [SwaggerOperation("Закрытие проекта по id")]
     public async Task<bool> V1CloseProject([FromQuery] int id, CancellationToken token)
     {
         return await projectService.CloseProject(id, token);
     }
 
-    [HttpPost("get")]
+    [HttpGet("get")]
     [SwaggerOperation("Получение проекта по id")]
-    public async Task<V1GetProjectRequest> V1GetProject([FromQuery] int id, CancellationToken token)
+    public async Task<V1GetProjectResponse> V1GetProject([FromQuery] int id, CancellationToken token)
     {
         var project = await projectService.GetProject(id, token);
 
-        return new V1GetProjectRequest
+        return new V1GetProjectResponse
         {
             Id = project.Id,
             Name = project.Name,

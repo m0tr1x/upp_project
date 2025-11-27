@@ -2,7 +2,7 @@
 
 namespace TaskTracker.Models.Project;
 
-public class V1GetProjectRequest
+public class V1GetProjectResponse
 {
     public int Id { get; set; }
 

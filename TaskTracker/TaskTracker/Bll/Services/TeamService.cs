@@ -5,7 +5,7 @@ namespace TaskTracker.Bll.Services;
 
 public class TeamService : ITeamService
 {
-    public Task<bool> AddTeammateForTeam(int teamId, int userId, CancellationToken token)
+    public Task<bool> AddTeammateToTeam(int teamId, int userId, CancellationToken token)
     {
         throw new NotImplementedException();
     }

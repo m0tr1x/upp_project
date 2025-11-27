@@ -1,10 +1,13 @@
-﻿namespace TaskTracker.Bll.Models;
+﻿using TaskTracker.Bll.Models;
+using TaskStatus = TaskTracker.Bll.Models.TaskStatus;
 
-public class Task
+namespace TaskTracker.Models.Task;
+
+public class V1GetTaskResponse
 {
     public int Id { get; set; }
 
-    public string Title { get; set; } = null!;
+    public required string Title { get; set; }
 
     public string? Description { get; set; }
 
@@ -24,21 +27,7 @@ public class Task
 
     public int ReporterId { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
-    public DateTime? UpdatedAt { get; set; }
-}
-
-public enum TaskStatus
-{
-    Todo,
-    InProgress,
-    Done
-}
-
-public enum TaskPriority
-{
-    Low,
-    Medium,
-    High
+    public DateTimeOffset? UpdatedAt { get; set; }
 }

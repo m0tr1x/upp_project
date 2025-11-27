@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="Models\User\" />
-    <Folder Include="Models\Task\" />
     <Folder Include="Models\Team\" />
     <Folder Include="Models\Teammate\" />
   </ItemGroup>
