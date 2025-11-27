@@ -39,8 +39,9 @@ public class AuthService : IAuthService
         var success = await _userRepository.AddUserAsync(user, token);
         if (!success) return new AuthResult { Success = false, ErrorMessage = "Ошибка создания пользователя" };
 
-        var tokens = GenerateTokens(user);
-        return new AuthResult { Success = true, AccessToken = tokens.accessToken, RefreshToken = tokens.refreshToken };
+        var (accessToken, refreshToken) = GenerateTokens(user);
+
+        return new AuthResult { Success = true, AccessToken = accessToken, RefreshToken = refreshToken };
     }
 
     public async Task<AuthResult> LoginAsync(LoginRequest request, CancellationToken token)
@@ -49,20 +50,26 @@ public class AuthService : IAuthService
         if (user == null || !HasherPassword.VerifyPassword(request.Password, user.PasswordHash))
             return new AuthResult { Success = false, ErrorMessage = "Неверный email или пароль" };
 
-        var tokens = GenerateTokens(user);
-        return new AuthResult { Success = true, AccessToken = tokens.accessToken, RefreshToken = tokens.refreshToken };
+        var (accessToken, refreshToken) = GenerateTokens(user);
+
+        return new AuthResult { Success = true, AccessToken = accessToken, RefreshToken = refreshToken };
     }
 
     public async Task<AuthResult> RefreshTokenAsync(string refreshToken, CancellationToken token)
     {
         var principal = AuthOptions.GetPrincipalFromExpiredToken(refreshToken);
-        if (principal == null) return new AuthResult { Success = false, ErrorMessage = "Неверный токен" };
+
+        if (principal == null)
+            return new AuthResult { Success = false, ErrorMessage = "Неверный токен" };
 
         var email = principal.Identity!.Name!;
         var user = await _userRepository.GetUserByEmailAsync(email, token);
-        if (user == null) return new AuthResult { Success = false, ErrorMessage = "Пользователь не найден" };
+
+        if (user == null)
+            return new AuthResult { Success = false, ErrorMessage = "Пользователь не найден" };
 
         var tokens = GenerateTokens(user);
+
         return new AuthResult { Success = true, AccessToken = tokens.accessToken, RefreshToken = tokens.refreshToken };
     }
 
@@ -70,8 +77,8 @@ public class AuthService : IAuthService
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.Email),
-            new Claim("userId", user.Id.ToString())
+            new(ClaimTypes.Name, user.Email),
+            new("userId", user.Id.ToString())
         };
 
         var accessToken = _tokenManager.GenerateAccessToken(claims);
