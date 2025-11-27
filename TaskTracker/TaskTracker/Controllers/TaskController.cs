@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TaskTracker.Bll.Services.Interfaces;
-using TaskTracker.Models.Project;
 using TaskTracker.Models.Task;
 
 namespace TaskTracker.Controllers;

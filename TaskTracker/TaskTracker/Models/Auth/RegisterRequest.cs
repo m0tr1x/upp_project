@@ -5,10 +5,10 @@ namespace TaskTracker.Models.Auth;
 public class RegisterRequest
 {
     [Required(AllowEmptyStrings = false)]
-    public string Email { get; set; } = null!;
+    public required string Email { get; set; }
 
     [Required(AllowEmptyStrings = false)]
-    public string Password { get; set; } = null!;
+    public required string Password { get; set; }
 
     public string? FirstName { get; set; }
 
