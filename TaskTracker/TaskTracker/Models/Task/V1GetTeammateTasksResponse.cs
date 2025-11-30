@@ -1,10 +1,16 @@
 ﻿using TaskTracker.Bll.Enum;
-using TaskTracker.Bll.Models;
 
 namespace TaskTracker.Models.Task;
 
-public class V1AddTaskRequest
+public class V1GetTeammateTasksResponse
 {
+    public required TeammateTask[] TeammateTasks { get; set; }
+}
+
+public class TeammateTask
+{
+    public int Id { get; set; }
+
     public required string Title { get; set; }
 
     public string? Description { get; set; }
@@ -20,4 +26,8 @@ public class V1AddTaskRequest
     public int? AssigneeId { get; set; }
 
     public int ReporterId { get; set; }
+
+    public DateTimeOffset CreatedAt { get; set; }
+
+    public DateTimeOffset? UpdatedAt { get; set; }
 }

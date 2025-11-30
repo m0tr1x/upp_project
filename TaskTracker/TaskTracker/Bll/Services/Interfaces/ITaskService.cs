@@ -1,4 +1,4 @@
-﻿using System.Threading;
+﻿using TaskTracker.Models.Task;
 using Task = TaskTracker.Bll.Models.Task;
 
 namespace TaskTracker.Bll.Services.Interfaces;
@@ -11,7 +11,7 @@ public interface ITaskService
 
     Task<Task[]> GetTeammateTasks(int teammateId, CancellationToken token);
 
-    Task<bool> UpdateTask(Task task, CancellationToken token);
+    Task<bool> UpdateTask(V1UpdateTaskRequest task, CancellationToken token);
 
     Task<bool> CloseTask(int taskId, CancellationToken token);
 

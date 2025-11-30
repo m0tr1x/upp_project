@@ -22,8 +22,6 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
             Status = request.Status,
             Priority = request.Priority,
             DueDate = request.DueDate,
-            EstimateHours = request.EstimateHours,
-            ActualHours = request.ActualHours,
             ProjectId = request.ProjectId,
             AssigneeId = request.AssigneeId,
             ReporterId = request.ReporterId,
@@ -44,8 +42,6 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
             Status = task.Status,
             Priority = task.Priority,
             DueDate = task.DueDate,
-            EstimateHours = task.EstimateHours,
-            ActualHours = task.ActualHours,
             ProjectId = task.ProjectId,
             AssigneeId = task.AssigneeId,
             ReporterId = task.ReporterId,
@@ -54,32 +50,33 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
     }
 
     [HttpGet("get/teammete")]
-    [SwaggerOperation("Получение задачи по id")]
-    public async Task<V1GetTaskResponse> V1GetTeammateTasks([FromQuery] int teammateId, CancellationToken token)
+    [SwaggerOperation("Получение задач участника команды")]
+    public async Task<V1GetTeammateTasksResponse> V1GetTeammateTasks([FromQuery] int teammateId, CancellationToken token)
     {
-        var task = await taskService.GetTeammateTasks(teammateId, token);
+        var tasks = await taskService.GetTeammateTasks(teammateId, token);
 
-        return new V1GetTaskResponse
+        return new V1GetTeammateTasksResponse
         {
-            Title = task.Title,
-            Description = task.Description,
-            Status = task.Status,
-            Priority = task.Priority,
-            DueDate = task.DueDate,
-            EstimateHours = task.EstimateHours,
-            ActualHours = task.ActualHours,
-            ProjectId = task.ProjectId,
-            AssigneeId = task.AssigneeId,
-            ReporterId = task.ReporterId,
-            CreatedAt = DateTimeOffset.Now
+            TeammateTasks = tasks.Select(task => new TeammateTask
+            {
+                Title = task.Title,
+                Description = task.Description,
+                Status = task.Status,
+                Priority = task.Priority,
+                DueDate = task.DueDate,
+                ProjectId = task.ProjectId,
+                AssigneeId = task.AssigneeId,
+                ReporterId = task.ReporterId,
+                CreatedAt = DateTimeOffset.Now
+            }).ToArray()
         };
     }
 
     [HttpPut("update")]
     [SwaggerOperation("Обновление задачи")]
-    public async Task<bool> V1UpdateTask([FromBody] request, CancellationToken token)
+    public async Task<bool> V1UpdateTask([FromBody] V1UpdateTaskRequest request, CancellationToken token)
     {
-        ///return await taskService.UpdateTask(request, token);
+        return await taskService.UpdateTask(request, token);
     }
 
     [HttpPut("assign")]

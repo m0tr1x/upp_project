@@ -21,7 +21,6 @@
   <ItemGroup>
     <Folder Include="Models\User\" />
     <Folder Include="Models\Team\" />
-    <Folder Include="Models\Teammate\" />
   </ItemGroup>
 
 </Project>

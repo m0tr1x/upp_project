@@ -17,10 +17,6 @@ public class V1GetTaskResponse
 
     public DateOnly? DueDate { get; set; }
 
-    public float? EstimateHours { get; set; }
-
-    public float? ActualHours { get; set; }
-
     public int ProjectId { get; set; }
 
     public int? AssigneeId { get; set; }

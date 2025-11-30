@@ -9,13 +9,13 @@ public class TaskRepository(Client client) : ITaskRepository
 {
     private readonly Client _client = client;
 
-    public async Task<bool> AddTaskAsync(DbTask task, CancellationToken token)
+    public async Task<int> AddTaskAsync(DbTask task, CancellationToken token)
     {
         var response = await _client
             .From<DbTask>()
             .Insert(task, cancellationToken: token);
 
-        return response.Models.Count > 0;
+        return response.Models.First().Id;
     }
 
     public async Task<bool> AssignOnTeammateAsync(int taskId, int assigneeId, CancellationToken token)

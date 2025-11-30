@@ -1,4 +1,5 @@
-﻿using TaskTracker.Bll.Exceptions;
+﻿using TaskTracker.Bll.Enum;
+using TaskTracker.Bll.Exceptions;
 using TaskTracker.Bll.Models;
 using TaskTracker.Bll.Services.Interfaces;
 using TaskTracker.Dal.Models;
@@ -39,7 +40,12 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
             Id = dbProject.Id,
             Name = dbProject.Name!,
             Description = dbProject.Description,
-
+            Status = (CommonStatus)dbProject.Status,
+            StartDate = dbProject.StartDate,
+            EndDate = dbProject.EndDate,
+            TeamId = dbProject.TeamId,
+            CreatedAt= dbProject.CreatedAt,
+            CreatedByUserId = dbProject.CreatedByUserId,
         };
     }
 

@@ -16,10 +16,6 @@ public class Task
 
     public DateOnly? DueDate { get; set; }
 
-    public float? EstimateHours { get; set; }
-
-    public float? ActualHours { get; set; }
-
     public int ProjectId { get; set; }
 
     public int? AssigneeId { get; set; }
@@ -29,11 +25,4 @@ public class Task
     public DateTimeOffset CreatedAt { get; set; }
 
     public DateTimeOffset? UpdatedAt { get; set; }
-}
-
-public enum TaskPriority
-{
-    Low,
-    Medium,
-    High
 }
