@@ -1,13 +1,14 @@
 ﻿using TaskTracker.Bll.Models;
 using TaskTracker.Bll.Services.Interfaces;
+using TaskTracker.Dal.Repositories.Interfaces;
 
 namespace TaskTracker.Bll.Services;
 
-public class UserService : IUserService
+public class UserService(IUserRepository userRepository) : IUserService
 {
-    public Task<bool> DeleteUser(int userId, CancellationToken token)
+    public async Task<bool> DeleteUser(int userId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        return await userRepository.DeleteUserAsync(userId, token);
     }
 
     public Task<User> GetUser(int userId, CancellationToken token)

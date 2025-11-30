@@ -14,5 +14,5 @@ public interface ITaskRepository
 
     Task<bool> CloseTaskAsync(int taskId, CancellationToken token);
 
-    Task<bool> AssingOnTeammateAsync(int taskId, int assigneeId, CancellationToken token);
+    Task<bool> AssignOnTeammateAsync(int taskId, int assigneeId, CancellationToken token);
 }

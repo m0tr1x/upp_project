@@ -14,5 +14,5 @@ public interface ITeamService
 
     Task<bool> AddTeammateToTeam(int teamId, int userId, CancellationToken token);
 
-    Task<bool> DeleteTeammateFromTeam(int teamId, int userId, CancellationToken token);
+    Task<bool> DeleteTeammateFromTeam(int teammateId, CancellationToken token);
 }

@@ -4,14 +4,9 @@ using TaskTracker.Dal.Repositories.Interfaces;
 
 namespace TaskTracker.Dal.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository(Client client) : IUserRepository
 {
-    private readonly Client _client;
-
-    public UserRepository(Client client)
-    {
-        _client = client;
-    }
+    private readonly Client _client = client;
 
     public async Task<bool> AddUserAsync(DbUser user, CancellationToken token)
     {
@@ -51,6 +46,7 @@ public class UserRepository : IUserRepository
 
         return response.Models.Count > 0;
     }
+
     public async Task<DbUser?> GetUserByEmailAsync(string email, CancellationToken token)
     {
         var response = await _client

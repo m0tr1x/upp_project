@@ -4,14 +4,9 @@ using TaskTracker.Dal.Repositories.Interfaces;
 
 namespace TaskTracker.Dal.Repositories;
 
-public class TeammateRepository : ITeammateRepository
+public class TeammateRepository(Client client) : ITeammateRepository
 {
-    private readonly Client _client;
-
-    public TeammateRepository(Client client)
-    {
-        _client = client;
-    }
+    private readonly Client _client = client;
 
     public async Task<bool> AddTeammateAsync(DbTeammate teammate, CancellationToken token)
     {

@@ -1,9 +1,12 @@
 ﻿using TaskTracker.Bll.Models;
 using TaskTracker.Bll.Services.Interfaces;
+using TaskTracker.Dal.Repositories.Interfaces;
 
 namespace TaskTracker.Bll.Services;
 
-public class TeamService : ITeamService
+public class TeamService(
+    ITeamRepository teamRepository,
+    ITeammateRepository teammateRepository) : ITeamService
 {
     public Task<bool> AddTeammateToTeam(int teamId, int userId, CancellationToken token)
     {
@@ -15,14 +18,14 @@ public class TeamService : ITeamService
         throw new NotImplementedException();
     }
 
-    public Task<bool> CloseTeam(int teamId, CancellationToken token)
+    public async Task<bool> CloseTeam(int teamId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        return await teamRepository.CloseTeamAsync(teamId, token);
     }
 
-    public Task<bool> DeleteTeammateFromTeam(int teamId, int userId, CancellationToken token)
+    public async Task<bool> DeleteTeammateFromTeam(int teammateId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        return await teammateRepository.DeactivateAsync(teammateId, token);
     }
 
     public Task<Team> GetTeam(int teamId, CancellationToken token)

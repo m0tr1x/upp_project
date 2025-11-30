@@ -10,5 +10,5 @@ public interface ITeammateRepository
 
     Task<bool> UpdateTeammateAsync(DbTeammate team, CancellationToken token);
 
-    Task<bool> DeactivateAsync(int teamId, CancellationToken token);
+    Task<bool> DeactivateAsync(int teammateId, CancellationToken token);
 }

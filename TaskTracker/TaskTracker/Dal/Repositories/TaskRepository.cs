@@ -5,14 +5,9 @@ using TaskTracker.Dal.Repositories.Interfaces;
 
 namespace TaskTracker.Dal.Repositories;
 
-public class TaskRepository : ITaskRepository
+public class TaskRepository(Client client) : ITaskRepository
 {
-    private readonly Client _client;
-
-    public TaskRepository(Client client)
-    {
-        _client = client;
-    }
+    private readonly Client _client = client;
 
     public async Task<bool> AddTaskAsync(DbTask task, CancellationToken token)
     {
@@ -23,7 +18,7 @@ public class TaskRepository : ITaskRepository
         return response.Models.Count > 0;
     }
 
-    public async Task<bool> AssingOnTeammateAsync(int taskId, int assigneeId, CancellationToken token)
+    public async Task<bool> AssignOnTeammateAsync(int taskId, int assigneeId, CancellationToken token)
     {
         var updatePayload = new DbTask
         {

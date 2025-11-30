@@ -31,11 +31,33 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
         }, token);
     }
 
-    [HttpGet("add")]
+    [HttpGet("get")]
     [SwaggerOperation("Получение задачи по id")]
     public async Task<V1GetTaskResponse> V1GetTask([FromQuery] int id, CancellationToken token)
     {
         var task = await taskService.GetTask(id, token);
+
+        return new V1GetTaskResponse
+        {
+            Title = task.Title,
+            Description = task.Description,
+            Status = task.Status,
+            Priority = task.Priority,
+            DueDate = task.DueDate,
+            EstimateHours = task.EstimateHours,
+            ActualHours = task.ActualHours,
+            ProjectId = task.ProjectId,
+            AssigneeId = task.AssigneeId,
+            ReporterId = task.ReporterId,
+            CreatedAt = DateTimeOffset.Now
+        };
+    }
+
+    [HttpGet("get/teammete")]
+    [SwaggerOperation("Получение задачи по id")]
+    public async Task<V1GetTaskResponse> V1GetTeammateTasks([FromQuery] int teammateId, CancellationToken token)
+    {
+        var task = await taskService.GetTeammateTasks(teammateId, token);
 
         return new V1GetTaskResponse
         {
@@ -58,6 +80,13 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
     public async Task<bool> V1UpdateTask([FromBody] request, CancellationToken token)
     {
         ///return await taskService.UpdateTask(request, token);
+    }
+
+    [HttpPut("assign")]
+    [SwaggerOperation("Навешивание задачи на пользователя задачи")]
+    public async Task<bool> V1AssignTask([FromQuery]int taskId, [FromQuery]int userId, CancellationToken token)
+    {
+        return await taskService.AssignOnTeammate(taskId, userId, token);
     }
 
     [HttpDelete("close")]
