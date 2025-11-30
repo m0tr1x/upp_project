@@ -4,7 +4,7 @@ namespace TaskTracker.Dal.Repositories.Interfaces;
 
 public interface ITaskRepository
 {
-    Task<bool> AddTaskAsync(DbTask task, CancellationToken token);
+    Task<int> AddTaskAsync(DbTask task, CancellationToken token);
 
     Task<DbTask?> GetTaskAsync(int taskId, CancellationToken token);
 
@@ -14,5 +14,5 @@ public interface ITaskRepository
 
     Task<bool> CloseTaskAsync(int taskId, CancellationToken token);
 
-    Task<bool> AssingOnTeammateAsync(int taskId, int assigneeId, CancellationToken token);
+    Task<bool> AssignOnTeammateAsync(int taskId, int assigneeId, CancellationToken token);
 }

@@ -26,12 +26,6 @@ public class DbTask : BaseModel
     [Column("due_date")]
     public DateOnly? DueDate { get; set; }
 
-    [Column("estimate_hours")]
-    public float? EstimateHours { get; set; }
-
-    [Column("actual_hours")]
-    public float? ActualHours { get; set; }
-
     [Column("project_id")]
     public int ProjectId { get; set; }
 
@@ -42,8 +36,8 @@ public class DbTask : BaseModel
     public int ReporterId { get; set; }
 
     [Column("created_at")]
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     [Column("updated_at")]
-    public DateTime? UpdatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 }

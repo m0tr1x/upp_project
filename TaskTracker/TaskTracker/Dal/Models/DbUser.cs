@@ -24,11 +24,11 @@ public class DbUser : BaseModel
     public string? LastName { get; set; }
 
     [Column("created_at")]
-    public DateTime CreatedAt { get; set; }
-
-    [Column("last_login_at")]
-    public DateTime? LastLoginAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     [Column("is_active")]
     public bool IsActive { get; set; }
+
+    [Column("delete_at")]
+    public DateTimeOffset? DeleteAt { get; set; }
 }

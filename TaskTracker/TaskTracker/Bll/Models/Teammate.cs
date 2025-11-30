@@ -1,4 +1,6 @@
-﻿namespace TaskTracker.Bll.Models;
+﻿using TaskTracker.Bll.Enum;
+
+namespace TaskTracker.Bll.Models;
 
 public class Teammate
 {
@@ -10,12 +12,5 @@ public class Teammate
 
     public Role Role { get; set; }
 
-    public DateTime JoinedAt { get; set; }
-}
-
-public enum Role
-{
-    Admin,
-    Teammate,
-    Viewer
+    public DateTimeOffset JoinedAt { get; set; }
 }

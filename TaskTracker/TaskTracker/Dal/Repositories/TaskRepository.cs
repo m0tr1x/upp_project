@@ -1,29 +1,24 @@
 ﻿using Supabase;
+using TaskTracker.Bll.Enum;
 using TaskTracker.Dal.Models;
 using TaskTracker.Dal.Repositories.Interfaces;
-using TaskStatus = TaskTracker.Bll.Models.TaskStatus;
 
 namespace TaskTracker.Dal.Repositories;
 
-public class TaskRepository : ITaskRepository
+public class TaskRepository(Client client) : ITaskRepository
 {
-    private readonly Client _client;
+    private readonly Client _client = client;
 
-    public TaskRepository(Client client)
-    {
-        _client = client;
-    }
-
-    public async Task<bool> AddTaskAsync(DbTask task, CancellationToken token)
+    public async Task<int> AddTaskAsync(DbTask task, CancellationToken token)
     {
         var response = await _client
             .From<DbTask>()
             .Insert(task, cancellationToken: token);
 
-        return response.Models.Count > 0;
+        return response.Models.First().Id;
     }
 
-    public async Task<bool> AssingOnTeammateAsync(int taskId, int assigneeId, CancellationToken token)
+    public async Task<bool> AssignOnTeammateAsync(int taskId, int assigneeId, CancellationToken token)
     {
         var updatePayload = new DbTask
         {
@@ -45,7 +40,7 @@ public class TaskRepository : ITaskRepository
         var closePayload = new DbTask
         {
             Id = taskId,
-            Status = (int)TaskStatus.Done,
+            Status = (int)CommonStatus.Done,
             UpdatedAt = DateTime.UtcNow
         };
 

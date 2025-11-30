@@ -1,4 +1,6 @@
-﻿namespace TaskTracker.Bll.Models;
+﻿using TaskTracker.Bll.Enum;
+
+namespace TaskTracker.Bll.Models;
 
 public class Project
 {
@@ -8,7 +10,7 @@ public class Project
 
     public string? Description { get; set; }
 
-    public TaskStatus Status { get; set; }
+    public CommonStatus Status { get; set; }
 
     public DateOnly? StartDate { get; set; }
 
@@ -16,7 +18,7 @@ public class Project
 
     public int TeamId { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     public int CreatedByUserId { get; set; }
 }

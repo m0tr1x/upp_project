@@ -1,8 +1,6 @@
-﻿using Supabase.Postgrest.Models;
+﻿namespace TaskTracker.Bll.Models;
 
-namespace TaskTracker.Bll.Models;
-
-public class Team : BaseModel
+public class Team
 {
     public int Id { get; set; }
 
@@ -12,5 +10,5 @@ public class Team : BaseModel
 
     public int OwnerId { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 }

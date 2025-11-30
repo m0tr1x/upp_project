@@ -4,22 +4,17 @@ using TaskTracker.Dal.Repositories.Interfaces;
 
 namespace TaskTracker.Dal.Repositories;
 
-public class TeamRepository : ITeamRepository
+public class TeamRepository(Client client) : ITeamRepository
 {
-    private readonly Client _client;
+    private readonly Client _client = client;
 
-    public TeamRepository(Client client)
-    {
-        _client = client;
-    }
-
-    public async Task<bool> AddTeamAsync(DbTeam team, CancellationToken token)
+    public async Task<int> CreateTeamAsync(DbTeam team, CancellationToken token)
     {
         var response = await _client
             .From<DbTeam>()
             .Insert(team, cancellationToken: token);
 
-        return response.Models.Count > 0;
+        return response.Models.First().Id;
     }
 
     public async Task<bool> CloseTeamAsync(int teamId, CancellationToken token)
