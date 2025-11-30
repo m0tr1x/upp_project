@@ -1,8 +1,8 @@
 ﻿using TaskTracker.Bll.Enum;
 
-namespace TaskTracker.Bll.Models;
+namespace TaskTracker.Models.User;
 
-public class Teammate
+public class V1GetTeammateResponse
 {
     public int Id { get; set; }
 

@@ -1,16 +1,12 @@
 ﻿using TaskTracker.Bll.Enum;
 
-namespace TaskTracker.Bll.Models;
+namespace TaskTracker.Models.Team;
 
-public class Teammate
+public class V1AddTeammateToTeamRequest
 {
-    public int Id { get; set; }
-
     public int UserId { get; set; }
 
     public int TeamId { get; set; }
 
     public Role Role { get; set; }
-
-    public DateTimeOffset JoinedAt { get; set; }
 }

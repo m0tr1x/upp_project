@@ -1,6 +1,6 @@
-﻿namespace TaskTracker.Bll.Models;
+﻿namespace TaskTracker.Models.Team;
 
-public class Team
+public class V1CreateTeamRequest
 {
     public int Id { get; set; }
 
@@ -10,5 +10,5 @@ public class Team
 
     public int OwnerId { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 }

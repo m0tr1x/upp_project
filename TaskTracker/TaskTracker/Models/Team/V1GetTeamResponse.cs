@@ -1,8 +1,6 @@
-﻿using Supabase.Postgrest.Models;
+﻿namespace TaskTracker.Models.Team;
 
-namespace TaskTracker.Bll.Models;
-
-public class Team
+public class V1GetTeamResponse
 {
     public int Id { get; set; }
 

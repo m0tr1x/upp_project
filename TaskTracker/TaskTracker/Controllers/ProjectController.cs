@@ -60,5 +60,4 @@ public class ProjectController([FromServices] IProjectService projectService) : 
             CreatedByUserId = project.CreatedByUserId
         };
     }
-
 }

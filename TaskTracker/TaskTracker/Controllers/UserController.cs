@@ -41,4 +41,27 @@ public class UserController([FromServices] IUserService userService) : Controlle
     {
         return await userService.UpdateUser(request, token);
     }
+
+    [HttpGet("get/teammate")]
+    [SwaggerOperation("Получение участника команды по id")]
+    public async Task<V1GetTeammateResponse> V1GetTeammate([FromQuery] int teammateId, CancellationToken token)
+    {
+        var teammate = await userService.GetTeammate(teammateId, token);
+
+        return new V1GetTeammateResponse
+        {
+            Id = teammate.Id,
+            UserId = teammate.UserId,
+            TeamId = teammate.TeamId,
+            Role = teammate.Role,
+            JoinedAt = teammate.JoinedAt,
+        };
+    }
+
+    [HttpGet("update/teammate")]
+    [SwaggerOperation("Обновление участника команды")]
+    public async Task<bool> V1UpdateTeammate([FromBody] V1UpdateTeammateRequest request, CancellationToken token)
+    {
+        return await userService.UpdateTeammate(request, token);
+    }
 }

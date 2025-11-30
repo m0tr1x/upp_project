@@ -1,5 +1,4 @@
 ﻿using TaskTracker.Bll.Enum;
-using TaskTracker.Bll.Models;
 
 namespace TaskTracker.Models.Task;
 

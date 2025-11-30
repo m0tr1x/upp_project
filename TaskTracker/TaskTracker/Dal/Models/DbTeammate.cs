@@ -21,5 +21,5 @@ public class DbTeammate : BaseModel
     public int Role { get; set; }
 
     [Column("joined_at")]
-    public DateTime JoinedAt { get; set; }
+    public DateTimeOffset JoinedAt { get; set; }
 }

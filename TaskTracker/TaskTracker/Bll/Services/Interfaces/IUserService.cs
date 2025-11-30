@@ -10,4 +10,8 @@ public interface IUserService
     Task<User> GetUser(int userId, CancellationToken token);
 
     Task<bool> DeleteUser(int userId, CancellationToken token);
+
+    Task<Teammate> GetTeammate(int teammateId, CancellationToken token);
+
+    Task<bool> UpdateTeammate(V1UpdateTeammateRequest team, CancellationToken token);
 }
