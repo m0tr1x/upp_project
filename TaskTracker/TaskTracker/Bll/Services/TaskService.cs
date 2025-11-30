@@ -39,7 +39,7 @@ public class TaskService(ITaskRepository taskRepository) : ITaskService
     public async Task<Task> GetTask(int taskId, CancellationToken token)
     {
         var task = await taskRepository.GetTaskAsync(taskId, token)
-            ?? throw new NotFound();
+            ?? throw new NotFoundException();
 
         return new Task
         {
@@ -76,7 +76,7 @@ public class TaskService(ITaskRepository taskRepository) : ITaskService
     public async Task<bool> UpdateTask(V1UpdateTaskRequest task, CancellationToken token)
     {
         var dbTask = await taskRepository.GetTaskAsync(task.Id, token)
-            ?? throw new NotFound();
+            ?? throw new NotFoundException();
 
         if (task.Title != null)
             dbTask.Title = task.Title;

@@ -30,10 +30,9 @@ public class TeamController([FromServices] ITeamService teamService) : Controlle
     [HttpDelete("delete/user")]
     [SwaggerOperation("Удаление пользователя из команды")]
     public async Task<bool> V1DeleteTeammateFromTeam(
-        [FromQuery] int teamId,
-        [FromQuery] int userId,
+        [FromQuery] int teammateId,
         CancellationToken token)
     {
-        return await teamService.DeleteTeammateFromTeam(teamId, userId, token);
+        return await teamService.DeleteTeammateFromTeam(teammateId, token);
     }
 }

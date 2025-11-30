@@ -26,7 +26,7 @@ public class GlobalExceptionMiddleware(RequestDelegate next)
 
         context.Response.StatusCode = exception switch
         {
-            NotFound => (int)HttpStatusCode.NotFound,
+            NotFoundException => (int)HttpStatusCode.NotFound,
             _ => (int)HttpStatusCode.InternalServerError,
         };
 

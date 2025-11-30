@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\User\" />
     <Folder Include="Models\Team\" />
   </ItemGroup>
 

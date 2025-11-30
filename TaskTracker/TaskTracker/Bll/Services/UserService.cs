@@ -1,6 +1,8 @@
-﻿using TaskTracker.Bll.Models;
+﻿using TaskTracker.Bll.Exceptions;
+using TaskTracker.Bll.Models;
 using TaskTracker.Bll.Services.Interfaces;
 using TaskTracker.Dal.Repositories.Interfaces;
+using TaskTracker.Models.User;
 
 namespace TaskTracker.Bll.Services;
 
@@ -11,13 +13,33 @@ public class UserService(IUserRepository userRepository) : IUserService
         return await userRepository.DeleteUserAsync(userId, token);
     }
 
-    public Task<User> GetUser(int userId, CancellationToken token)
+    public async Task<User> GetUser(int userId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var user = await userRepository.GetUserAsync(userId, token)
+            ?? throw new NotFoundException();
+
+        return new User
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            CreatedAt = user.CreatedAt,
+            IsActive = user.IsActive,
+        };
     }
 
-    public Task<bool> UpdateUser(User user, CancellationToken token)
+    public async Task<bool> UpdateUser(V1UpdateUserRequest user, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var dbUser = await userRepository.GetUserAsync(user.Id, token)
+            ?? throw new NotFoundException();
+
+        if (user.FirstName != null)
+            dbUser.FirstName = user.FirstName;
+
+        if (user.LastName != null)
+            dbUser.LastName = user.LastName;
+
+        return await userRepository.UpdateUserAsync(dbUser, token);
     }
 }

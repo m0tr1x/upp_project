@@ -8,12 +8,12 @@ public class TeamService(
     ITeamRepository teamRepository,
     ITeammateRepository teammateRepository) : ITeamService
 {
-    public Task<bool> AddTeammateToTeam(int teamId, int userId, CancellationToken token)
+    public async Task<bool> AddTeammateToTeam(int teamId, int userId, CancellationToken token)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> AddTeam(Team team, CancellationToken token)
+    public async Task<bool> AddTeam(Team team, CancellationToken token)
     {
         throw new NotImplementedException();
     }
@@ -28,12 +28,12 @@ public class TeamService(
         return await teammateRepository.DeactivateAsync(teammateId, token);
     }
 
-    public Task<Team> GetTeam(int teamId, CancellationToken token)
+    public async Task<Team> GetTeam(int teamId, CancellationToken token)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateTeam(Team team, CancellationToken token)
+    public async Task<bool> UpdateTeam(Team team, CancellationToken token)
     {
         throw new NotImplementedException();
     }
