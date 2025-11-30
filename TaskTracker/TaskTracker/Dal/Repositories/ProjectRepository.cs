@@ -1,7 +1,7 @@
 ﻿using Supabase;
+using TaskTracker.Bll.Enum;
 using TaskTracker.Dal.Models;
 using TaskTracker.Dal.Repositories.Interfaces;
-using TaskStatus = TaskTracker.Bll.Models.TaskStatus;
 
 namespace TaskTracker.Dal.Repositories;
 
@@ -9,13 +9,13 @@ public class ProjectRepository(Client client) : IProjectRepository
 {
     private readonly Client _client = client;
 
-    public async Task<bool> AddProjectAsync(DbProject project, CancellationToken token)
+    public async Task<int> AddProjectAsync(DbProject project, CancellationToken token)
     {
         var response = await _client
             .From<DbProject>()
             .Insert(project, cancellationToken: token);
 
-        return response.Models.Count > 0;
+        return response.Models.First().Id;
     }
 
     public async Task<bool> CloseProjectAsync(int projectId, CancellationToken token)
@@ -23,7 +23,7 @@ public class ProjectRepository(Client client) : IProjectRepository
         var updatePayload = new DbProject
         {
             Id = projectId,
-            Status = (int)TaskStatus.Done,
+            Status = (int)CommonStatus.Done,
         };
 
         var response = await _client

@@ -7,7 +7,7 @@ public interface IProjectService
 {
     Task<int> AddProject(Project project, CancellationToken token);
 
-    Task<bool> UpdateProject(V1CreateProjectRequest project, CancellationToken token);
+    Task<bool> UpdateProject(V1UpdateProjectRequest project, CancellationToken token);
 
     Task<Project> GetProject(int projectId, CancellationToken token);
 

@@ -24,12 +24,12 @@ public class ProjectController([FromServices] IProjectService projectService) : 
             TeamId = request.TeamId,
             CreatedAt = DateTimeOffset.Now,
             CreatedByUserId = request.CreatedByUserId
-        });
+        }, token);
     }
 
     [HttpPut("update")]
     [SwaggerOperation("Обновление проекта")]
-    public async Task<bool> V1UpdateProject([FromBody] V1CreateProjectRequest request, CancellationToken token)
+    public async Task<bool> V1UpdateProject([FromBody] V1UpdateProjectRequest request, CancellationToken token)
     {
         return await projectService.UpdateProject(request, token);
     }

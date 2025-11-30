@@ -1,6 +1,4 @@
-﻿using Supabase.Postgrest.Models;
-
-namespace TaskTracker.Bll.Models;
+﻿namespace TaskTracker.Bll.Models;
 
 public class Team
 {

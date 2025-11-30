@@ -1,4 +1,6 @@
-﻿namespace TaskTracker.Bll.Models;
+﻿using TaskTracker.Bll.Enum;
+
+namespace TaskTracker.Bll.Models;
 
 public class Task
 {
@@ -8,7 +10,7 @@ public class Task
 
     public string? Description { get; set; }
 
-    public TaskStatus Status { get; set; }
+    public CommonStatus Status { get; set; }
 
     public TaskPriority Priority { get; set; }
 
@@ -27,13 +29,6 @@ public class Task
     public DateTimeOffset CreatedAt { get; set; }
 
     public DateTimeOffset? UpdatedAt { get; set; }
-}
-
-public enum TaskStatus
-{
-    Todo,
-    InProgress,
-    Done
 }
 
 public enum TaskPriority

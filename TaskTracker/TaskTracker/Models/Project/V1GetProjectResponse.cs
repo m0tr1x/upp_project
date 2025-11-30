@@ -1,4 +1,4 @@
-﻿using TaskTracker.Bll.Models;
+﻿using TaskTracker.Bll.Enum;
 
 namespace TaskTracker.Models.Project;
 
@@ -10,7 +10,7 @@ public class V1GetProjectResponse
 
     public string? Description { get; set; }
 
-    public TaskStatus Status { get; set; }
+    public CommonStatus Status { get; set; }
 
     public DateOnly? StartDate { get; set; }
 

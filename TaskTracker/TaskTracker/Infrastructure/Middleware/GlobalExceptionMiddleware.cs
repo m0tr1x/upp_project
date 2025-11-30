@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using System.Net;
+using TaskTracker.Bll.Exceptions;
 
 namespace TaskTracker.Infrastructure.Middleware;
 
@@ -25,6 +26,7 @@ public class GlobalExceptionMiddleware(RequestDelegate next)
 
         context.Response.StatusCode = exception switch
         {
+            NotFound => (int)HttpStatusCode.NotFound,
             _ => (int)HttpStatusCode.InternalServerError,
         };
 

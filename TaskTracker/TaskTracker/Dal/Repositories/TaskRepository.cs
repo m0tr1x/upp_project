@@ -1,7 +1,7 @@
 ﻿using Supabase;
+using TaskTracker.Bll.Enum;
 using TaskTracker.Dal.Models;
 using TaskTracker.Dal.Repositories.Interfaces;
-using TaskStatus = TaskTracker.Bll.Models.TaskStatus;
 
 namespace TaskTracker.Dal.Repositories;
 
@@ -45,7 +45,7 @@ public class TaskRepository : ITaskRepository
         var closePayload = new DbTask
         {
             Id = taskId,
-            Status = (int)TaskStatus.Done,
+            Status = (int)CommonStatus.Done,
             UpdatedAt = DateTime.UtcNow
         };
 

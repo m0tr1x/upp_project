@@ -1,5 +1,5 @@
-﻿using TaskTracker.Bll.Models;
-using TaskStatus = TaskTracker.Bll.Models.TaskStatus;
+﻿using TaskTracker.Bll.Enum;
+using TaskTracker.Bll.Models;
 
 namespace TaskTracker.Models.Task;
 
@@ -11,7 +11,7 @@ public class V1GetTaskResponse
 
     public string? Description { get; set; }
 
-    public TaskStatus Status { get; set; }
+    public CommonStatus Status { get; set; }
 
     public TaskPriority Priority { get; set; }
 
