@@ -9,6 +9,7 @@ services:
       - "8080:80"  # Map host port 8080 to container port 80
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ASPNETCORE_URLS=http://0.0.0.0:80
       # Add your Supabase configuration as environment variables
       - Supabase__SupabaseURL=${SUPABASE_URL}
       - Supabase__SupabaseAPI=${SUPABASE_API}
