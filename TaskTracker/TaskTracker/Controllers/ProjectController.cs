@@ -12,6 +12,13 @@ namespace TaskTracker.Controllers;
 [Route("api/v1/project")]
 public class ProjectController([FromServices] IProjectService projectService) : ControllerBase
 {
+    [HttpGet("projects")]
+    [SwaggerOperation("Get all projects")]
+    public async Task<List<V1GetProjectResponse>> V1GetProjects(CancellationToken token)
+    {
+        return await projectService.GetProjects(token);
+    }
+
     [HttpPost("create")]
     [SwaggerOperation("Creates a new project")]
     public async Task<long> V1CreateProject([FromBody] V1CreateProjectRequest request, CancellationToken token)
@@ -23,7 +30,6 @@ public class ProjectController([FromServices] IProjectService projectService) : 
             Status = request.Status,
             TeamId = request.TeamId,
             CreatedAt = DateTimeOffset.Now,
-            CreatedByUserId = request.CreatedByUserId
         }, token);
     }
 

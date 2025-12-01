@@ -26,7 +26,6 @@ public class UserService(
             Id = teammate.Id,
             UserId = teammate.UserId,
             TeamId = teammate.TeamId,
-            Role = (Role)teammate.Role,
             JoinedAt = teammate.JoinedAt,
         };
     }
@@ -51,9 +50,6 @@ public class UserService(
     {
         var dbTeammate = await teammateRepository.GetTeammateAsync(teammate.Id, token)
             ?? throw new NotFoundException();
-
-        if (teammate.Role != null)
-            dbTeammate.Role = (int)teammate.Role;
 
         return await teammateRepository.UpdateTeammateAsync(dbTeammate, token);
     }

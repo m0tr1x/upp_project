@@ -1,4 +1,5 @@
-﻿using TaskTracker.Bll.Exceptions;
+﻿using Supabase;
+using TaskTracker.Bll.Exceptions;
 using TaskTracker.Bll.Models;
 using TaskTracker.Bll.Services.Interfaces;
 using TaskTracker.Dal.Models;
@@ -9,17 +10,57 @@ namespace TaskTracker.Bll.Services;
 
 public class TeamService(
     ITeamRepository teamRepository,
-    ITeammateRepository teammateRepository) : ITeamService
+    ITeammateRepository teammateRepository, Client client) : ITeamService
 {
+    public async Task<List<V1GetUsersForTeamResponse>> GetUsersForTeam(int teamId, CancellationToken token)
+    {
+        var teammates = await teammateRepository.GetUsersByTeamIdAsync(teamId, token);
+
+        var results = new List<V1GetUsersForTeamResponse>();
+
+        foreach (var teammate in teammates)
+        {
+            var user = await client
+                .From<DbUser>()
+                .Where(u => u.Id == teammate.UserId)
+                .Single(cancellationToken: token);
+
+            if (user != null)
+            {
+                results.Add(new V1GetUsersForTeamResponse
+                {
+                    TeammateId = teammate.Id,
+                    UserId = user.Id,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                });
+            }
+        }
+
+        return results;
+    }
+
+    public async Task<List<V1GetTeamResponse>> GetTeams(CancellationToken token)
+    {
+        var teams = await teamRepository.GetAllTeams(token);
+
+        return teams.Select(t => new V1GetTeamResponse
+        {
+            Id = t.Id,
+            Name = t.Name,
+            Description = t.Description,
+            OwnerId = t.OwnerId
+        }).ToList();
+    }
+
     public async Task<bool> AddTeammateToTeam(Teammate teammate, CancellationToken token)
     {
         return await teammateRepository.AddTeammateAsync(new DbTeammate
         {
-            UserId = teammate.UserId,
             TeamId = teammate.TeamId,
-            Role = (int)teammate.Role,
             JoinedAt = teammate.JoinedAt
-        }, token);
+        }, teammate.Email, token);
     }
 
     public async Task<int> CreateTeam(Team team, CancellationToken token)

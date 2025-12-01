@@ -8,9 +8,11 @@ public class Teammate
 
     public int UserId { get; set; }
 
+    public string Email { get; set; } = null!;
+
     public int TeamId { get; set; }
 
     public Role Role { get; set; }
 
-    public DateTimeOffset JoinedAt { get; set; }
+    public DateTime JoinedAt { get; set; }
 }

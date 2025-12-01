@@ -12,6 +12,24 @@ namespace TaskTracker.Controllers;
 [Route("api/v1/team")]
 public class TeamController([FromServices] ITeamService teamService) : ControllerBase
 {
+    [HttpGet("teams")]
+    [SwaggerOperation("Get all teams")]
+    public async Task<List<V1GetTeamResponse>> V1GetTeams(CancellationToken token)
+    {
+        return await teamService.GetTeams(token);
+    }
+
+    [HttpGet("teams/{teamId}/users")]
+    [SwaggerOperation("Get all users in a team")]
+    public async Task<List<V1GetUsersForTeamResponse>> V1GetUsersByTeamId(
+        int teamId,
+        CancellationToken token)
+    {
+        var users = await teamService.GetUsersForTeam(teamId, token);
+
+        return users;
+    }
+
     [HttpPost("add")]
     [SwaggerOperation("Creates a new team")]
     public async Task<int> V1CreateTeam(
@@ -36,9 +54,9 @@ public class TeamController([FromServices] ITeamService teamService) : Controlle
         return await teamService.AddTeammateToTeam(new Teammate
         {
             TeamId = request.TeamId,
-            UserId = request.UserId,
+            Email = request.Email,
             Role = request.Role,
-            JoinedAt = DateTimeOffset.Now
+            JoinedAt = DateTime.Now
         }, token);
     }
 
