@@ -12,14 +12,14 @@ namespace TaskTracker.Controllers;
 public class UserController([FromServices] IUserService userService) : ControllerBase
 {
     [HttpDelete("delete")]
-    [SwaggerOperation("Закрытие задачи по id")]
+    [SwaggerOperation("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ id")]
     public async Task<bool> V1DeleteUser([FromQuery] int id, CancellationToken token)
     {
         return await userService.DeleteUser(id, token);
     }
 
     [HttpGet("get")]
-    [SwaggerOperation("Получение пользователя по id")]
+    [SwaggerOperation("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ id")]
     public async Task<V1GetUserResponse> V1GetUser([FromQuery] int id, CancellationToken token)
     {
         var user = await userService.GetUser(id, token);
@@ -35,15 +35,15 @@ public class UserController([FromServices] IUserService userService) : Controlle
         };
     }
 
-    [HttpGet("update")]
-    [SwaggerOperation("Обновление пользователя")]
+    [HttpPut("update")]
+    [SwaggerOperation("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
     public async Task<bool> V1UpdateUser([FromBody] V1UpdateUserRequest request, CancellationToken token)
     {
         return await userService.UpdateUser(request, token);
     }
 
     [HttpGet("get/teammate")]
-    [SwaggerOperation("Получение участника команды по id")]
+    [SwaggerOperation("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ id")]
     public async Task<V1GetTeammateResponse> V1GetTeammate([FromQuery] int teammateId, CancellationToken token)
     {
         var teammate = await userService.GetTeammate(teammateId, token);
@@ -58,8 +58,8 @@ public class UserController([FromServices] IUserService userService) : Controlle
         };
     }
 
-    [HttpGet("update/teammate")]
-    [SwaggerOperation("Обновление участника команды")]
+    [HttpPut("update/teammate")]
+    [SwaggerOperation("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
     public async Task<bool> V1UpdateTeammate([FromBody] V1UpdateTeammateRequest request, CancellationToken token)
     {
         return await userService.UpdateTeammate(request, token);
