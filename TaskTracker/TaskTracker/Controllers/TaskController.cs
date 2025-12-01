@@ -12,7 +12,7 @@ namespace TaskTracker.Controllers;
 public class TaskController([FromServices] ITaskService taskService) : ControllerBase
 {
     [HttpPost("add")]
-    [SwaggerOperation("Добавление задачи")]
+    [SwaggerOperation("Creates a new task")]
     public async Task<int> V1AddTask([FromBody] V1AddTaskRequest request, CancellationToken token)
     {
         return await taskService.AddTask(new Bll.Models.Task
@@ -30,7 +30,7 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
     }
 
     [HttpGet("get")]
-    [SwaggerOperation("Получение задачи по id")]
+    [SwaggerOperation("Gets a task by ID")]
     public async Task<V1GetTaskResponse> V1GetTask([FromQuery] int id, CancellationToken token)
     {
         var task = await taskService.GetTask(id, token);
@@ -49,8 +49,8 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
         };
     }
 
-    [HttpGet("get/teammete")]
-    [SwaggerOperation("Получение задач участника команды")]
+    [HttpGet("get/teammate")]
+    [SwaggerOperation("Gets all tasks assigned to a team member")]
     public async Task<V1GetTeammateTasksResponse> V1GetTeammateTasks([FromQuery] int teammateId, CancellationToken token)
     {
         var tasks = await taskService.GetTeammateTasks(teammateId, token);
@@ -73,21 +73,21 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
     }
 
     [HttpPut("update")]
-    [SwaggerOperation("Обновление задачи")]
+    [SwaggerOperation("Updates a task")]
     public async Task<bool> V1UpdateTask([FromBody] V1UpdateTaskRequest request, CancellationToken token)
     {
         return await taskService.UpdateTask(request, token);
     }
 
     [HttpPut("assign")]
-    [SwaggerOperation("Навешивание задачи на пользователя задачи")]
-    public async Task<bool> V1AssignTask([FromQuery]int taskId, [FromQuery]int userId, CancellationToken token)
+    [SwaggerOperation("Assigns a task to a user")]
+    public async Task<bool> V1AssignTask([FromQuery] int taskId, [FromQuery] int userId, CancellationToken token)
     {
         return await taskService.AssignOnTeammate(taskId, userId, token);
     }
 
     [HttpDelete("close")]
-    [SwaggerOperation("Закрытие задачи по id")]
+    [SwaggerOperation("Closes a task by ID")]
     public async Task<bool> V1CloseTask([FromQuery] int id, CancellationToken token)
     {
         return await taskService.CloseTask(id, token);
