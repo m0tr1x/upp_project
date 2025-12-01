@@ -5,6 +5,10 @@ namespace TaskTracker.Bll.Services.Interfaces;
 
 public interface ITeamService
 {
+    Task<List<V1GetUsersForTeamResponse>> GetUsersForTeam(int teamId, CancellationToken token);
+
+    Task<List<V1GetTeamResponse>> GetTeams(CancellationToken token);
+
     Task<int> CreateTeam(Team team, CancellationToken token);
 
     Task<Team> GetTeam(int teamId, CancellationToken token);

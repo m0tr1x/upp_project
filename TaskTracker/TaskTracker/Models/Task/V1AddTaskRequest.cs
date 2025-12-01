@@ -15,8 +15,4 @@ public class V1AddTaskRequest
     public DateOnly? DueDate { get; set; }
 
     public int ProjectId { get; set; }
-
-    public int? AssigneeId { get; set; }
-
-    public int ReporterId { get; set; }
 }

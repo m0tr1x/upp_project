@@ -8,10 +8,14 @@ using Task = TaskTracker.Bll.Models.Task;
 
 namespace TaskTracker.Bll.Services;
 
-public class TaskService(ITaskRepository taskRepository) : ITaskService
+public class TaskService(ITaskRepository taskRepository, IHttpContextAccessor httpContext) : ITaskService
 {
     public async Task<int> AddTask(Task task, CancellationToken token)
     {
+        var idStr = httpContext.HttpContext?.User.FindFirst("userId")?.Value;
+
+        int.TryParse(idStr, out var userId);
+
         return await taskRepository.AddTaskAsync(new DbTask
         {
             Title = task.Title,
@@ -20,8 +24,8 @@ public class TaskService(ITaskRepository taskRepository) : ITaskService
             Priority = (int)task.Priority,
             DueDate = task.DueDate,
             ProjectId = task.ProjectId,
-            AssigneeId = task.AssigneeId,
-            ReporterId = task.ReporterId,
+            AssigneeId = userId,
+            ReporterId = userId,
             CreatedAt = task.CreatedAt
         }, token);
     }
@@ -43,6 +47,7 @@ public class TaskService(ITaskRepository taskRepository) : ITaskService
 
         return new Task
         {
+            Id = task.Id,
             Title = task.Title,
             Description = task.Description,
             Status = (CommonStatus)task.Status,
@@ -55,12 +60,17 @@ public class TaskService(ITaskRepository taskRepository) : ITaskService
         };
     }
 
-    public async Task<Task[]> GetTeammateTasks(int teammateId, CancellationToken token)
+    public async Task<Task[]> GetTeammateTasks(CancellationToken token)
     {
-        var tasks = await taskRepository.GetTeammateTasksAsync(teammateId, token);
+        var userIdStr = httpContext.HttpContext?.User.FindFirst("userId")?.Value;
+
+        int.TryParse(userIdStr, out var userId);
+
+        var tasks = await taskRepository.GetTeammateTasksAsync(userId, token);
 
         return tasks.Select(task => new Task
         {
+            Id = task.Id,
             Title = task.Title,
             Description = task.Description,
             Status = (CommonStatus)task.Status,

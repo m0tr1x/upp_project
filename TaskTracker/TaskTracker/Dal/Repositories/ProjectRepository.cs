@@ -9,6 +9,15 @@ public class ProjectRepository(Client client) : IProjectRepository
 {
     private readonly Client _client = client;
 
+    public async Task<List<DbProject>> GetAllProjects(CancellationToken token)
+    {
+        var response = await _client
+            .From<DbProject>()
+            .Get(token);
+
+        return response.Models;
+    }
+
     public async Task<int> AddProjectAsync(DbProject project, CancellationToken token)
     {
         var response = await _client
@@ -20,10 +29,25 @@ public class ProjectRepository(Client client) : IProjectRepository
 
     public async Task<bool> CloseProjectAsync(int projectId, CancellationToken token)
     {
+        var project = await _client
+            .From<DbProject>()
+            .Where(p => p.Id == projectId)
+            .Single(cancellationToken: token);
+
+        if (project == null)
+            return false;
+
         var updatePayload = new DbProject
         {
-            Id = projectId,
+            Id = project.Id,
+            Name = project.Name,
+            Description = project.Description,
             Status = (int)CommonStatus.Done,
+            StartDate = project.StartDate,
+            EndDate = project.EndDate,
+            TeamId = project.TeamId,
+            CreatedAt = project.CreatedAt,
+            CreatedByUserId = project.CreatedByUserId
         };
 
         var response = await _client
@@ -33,6 +57,7 @@ public class ProjectRepository(Client client) : IProjectRepository
 
         return response.Models.Count > 0;
     }
+
 
     public async Task<DbProject?> GetProjectAsync(int projectId, CancellationToken token)
     {

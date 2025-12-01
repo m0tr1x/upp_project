@@ -1,5 +1,6 @@
 ﻿using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
+using System.Text.Json.Serialization;
 using ColumnAttribute = Supabase.Postgrest.Attributes.ColumnAttribute;
 using TableAttribute = Supabase.Postgrest.Attributes.TableAttribute;
 
@@ -17,9 +18,6 @@ public class DbTeammate : BaseModel
     [Column("team_id")]
     public int TeamId { get; set; }
 
-    [Column("role")]
-    public int Role { get; set; }
-
     [Column("joined_at")]
-    public DateTimeOffset JoinedAt { get; set; }
+    public DateTime JoinedAt { get; set; }
 }

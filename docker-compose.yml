@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  tasktracker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"  # Map host port 8080 to container port 80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      # Add your Supabase configuration as environment variables
+      - Supabase__SupabaseURL=${SUPABASE_URL}
+      - Supabase__SupabaseAPI=${SUPABASE_API}
+    # Optionally mount a volume for configuration
+    # volumes:
+    #   - ./appsettings.Production.json:/app/appsettings.Production.json
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/swagger/v1/swagger.json"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
