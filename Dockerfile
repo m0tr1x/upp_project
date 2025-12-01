@@ -19,6 +19,6 @@ EXPOSE 80
 
 # Add health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD dotnet TaskTracker.dll --check-health || exit 1
+  CMD curl -f http://localhost:80/swagger/v1/swagger.json || exit 1
 
 ENTRYPOINT ["dotnet", "TaskTracker.dll"]
