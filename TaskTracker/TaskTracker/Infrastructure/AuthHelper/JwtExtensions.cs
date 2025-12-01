@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace TaskTracker.Infrastructure.AuthHelper;
@@ -7,7 +7,11 @@ public static class JwtExtensions
 {
     public static AuthenticationBuilder AddJwt(this IServiceCollection services)
     {
-        return services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        return services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = "Access";
+            options.DefaultChallengeScheme = "Access";
+        })
             .AddJwtBearer("Access", options =>
             {
                 ConfigureJwt(options, validateIssuer: true, validateAudience: true);
