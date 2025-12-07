@@ -8,6 +8,14 @@ public class TeamRepository(Client client) : ITeamRepository
 {
     private readonly Client _client = client;
 
+    public async Task<List<DbTeam>> GetAllTeams(CancellationToken token)
+    {
+        var response = await _client
+            .From<DbTeam>()
+            .Get(token);
+        return response.Models;
+    }
+
     public async Task<int> CreateTeamAsync(DbTeam team, CancellationToken token)
     {
         var response = await _client

@@ -23,8 +23,6 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
             Priority = request.Priority,
             DueDate = request.DueDate,
             ProjectId = request.ProjectId,
-            AssigneeId = request.AssigneeId,
-            ReporterId = request.ReporterId,
             CreatedAt = DateTimeOffset.Now
         }, token);
     }
@@ -37,6 +35,7 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
 
         return new V1GetTaskResponse
         {
+            Id = task.Id,
             Title = task.Title,
             Description = task.Description,
             Status = task.Status,
@@ -51,14 +50,15 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
 
     [HttpGet("get/teammate")]
     [SwaggerOperation("Gets all tasks assigned to a team member")]
-    public async Task<V1GetTeammateTasksResponse> V1GetTeammateTasks([FromQuery] int teammateId, CancellationToken token)
+    public async Task<V1GetTeammateTasksResponse> V1GetTeammateTasks(CancellationToken token)
     {
-        var tasks = await taskService.GetTeammateTasks(teammateId, token);
+        var tasks = await taskService.GetTeammateTasks(token);
 
         return new V1GetTeammateTasksResponse
         {
             TeammateTasks = tasks.Select(task => new TeammateTask
             {
+                Id = task.Id,
                 Title = task.Title,
                 Description = task.Description,
                 Status = task.Status,

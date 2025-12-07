@@ -9,7 +9,7 @@ public interface ITaskService
 
     Task<Task> GetTask(int taskId, CancellationToken token);
 
-    Task<Task[]> GetTeammateTasks(int teammateId, CancellationToken token);
+    Task<Task[]> GetTeammateTasks(CancellationToken token);
 
     Task<int> UpdateTask(V1UpdateTaskRequest task, CancellationToken token);
 

@@ -1,4 +1,5 @@
-﻿using TaskTracker.Bll.Enum;
+﻿using Microsoft.AspNetCore.Http;
+using TaskTracker.Bll.Enum;
 using TaskTracker.Bll.Exceptions;
 using TaskTracker.Bll.Models;
 using TaskTracker.Bll.Services.Interfaces;
@@ -8,10 +9,31 @@ using TaskTracker.Models.Project;
 
 namespace TaskTracker.Bll.Services;
 
-public class ProjectService(IProjectRepository projectRepository) : IProjectService
+public class ProjectService(IProjectRepository projectRepository, IHttpContextAccessor context) : IProjectService
 {
+    public async Task<List<V1GetProjectResponse>> GetProjects(CancellationToken token)
+    {
+        var projects = await projectRepository.GetAllProjects(token);
+
+        return projects.Select(p => new V1GetProjectResponse
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Description = p.Description,
+            Status = (CommonStatus)p.Status,
+            StartDate = p.StartDate,
+            EndDate = p.EndDate,
+            TeamId = p.TeamId,
+            CreatedAt = p.CreatedAt,
+            CreatedByUserId = p.CreatedByUserId
+        }).ToList();
+    }
+
     public async Task<int> AddProject(Project project, CancellationToken token)
     {
+        var userIdClaim = context.HttpContext?.User?.FindFirst("userId")?.Value;
+        int.TryParse(userIdClaim, out var userId);
+
         return await projectRepository.AddProjectAsync(new DbProject
         {
             Name = project.Name,
@@ -21,7 +43,7 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
             EndDate = project.EndDate,
             TeamId = project.TeamId,
             CreatedAt = project.CreatedAt,
-            CreatedByUserId = project.CreatedByUserId,
+            CreatedByUserId = userId,
         }, token);
     }
 

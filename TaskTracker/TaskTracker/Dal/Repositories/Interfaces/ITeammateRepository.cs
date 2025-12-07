@@ -4,7 +4,9 @@ namespace TaskTracker.Dal.Repositories.Interfaces;
 
 public interface ITeammateRepository
 {
-    Task<bool> AddTeammateAsync(DbTeammate team, CancellationToken token);
+    Task<List<DbTeammate>> GetUsersByTeamIdAsync(int teamId, CancellationToken token);
+
+    Task<bool> AddTeammateAsync(DbTeammate team, string email, CancellationToken token);
 
     Task<DbTeammate?> GetTeammateAsync(int id, CancellationToken token);
 
