@@ -10,7 +10,7 @@ public interface ITaskRepository
 
     Task<IEnumerable<DbTask>> GetTeammateTasksAsync(int TeammateId, CancellationToken token);
 
-    Task<bool> UpdateTaskAsync(DbTask task, CancellationToken token);
+    Task<int> UpdateTaskAsync(DbTask task, CancellationToken token);
 
     Task<bool> CloseTaskAsync(int taskId, CancellationToken token);
 

@@ -74,7 +74,7 @@ public class TaskController([FromServices] ITaskService taskService) : Controlle
 
     [HttpPut("update")]
     [SwaggerOperation("Updates a task")]
-    public async Task<bool> V1UpdateTask([FromBody] V1UpdateTaskRequest request, CancellationToken token)
+    public async Task<int> V1UpdateTask([FromBody] V1UpdateTaskRequest request, CancellationToken token)
     {
         return await taskService.UpdateTask(request, token);
     }

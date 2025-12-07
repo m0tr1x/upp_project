@@ -72,13 +72,13 @@ public class TaskRepository(Client client) : ITaskRepository
         return response.Models;
     }
 
-    public async Task<bool> UpdateTaskAsync(DbTask task, CancellationToken token)
+    public async Task<int> UpdateTaskAsync(DbTask task, CancellationToken token)
     {
         var response = await _client
             .From<DbTask>()
             .Where(t => t.Id == task.Id)
             .Update(task, cancellationToken: token);
 
-        return response.Models.Count > 0;
+        return response.Models.First().Id;
     }
 }

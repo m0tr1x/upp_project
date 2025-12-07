@@ -11,7 +11,7 @@ public interface ITaskService
 
     Task<Task[]> GetTeammateTasks(int teammateId, CancellationToken token);
 
-    Task<bool> UpdateTask(V1UpdateTaskRequest task, CancellationToken token);
+    Task<int> UpdateTask(V1UpdateTaskRequest task, CancellationToken token);
 
     Task<bool> CloseTask(int taskId, CancellationToken token);
 

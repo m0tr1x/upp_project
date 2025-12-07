@@ -73,7 +73,7 @@ public class TaskService(ITaskRepository taskRepository) : ITaskService
         }).ToArray();
     }
 
-    public async Task<bool> UpdateTask(V1UpdateTaskRequest task, CancellationToken token)
+    public async Task<int> UpdateTask(V1UpdateTaskRequest task, CancellationToken token)
     {
         var dbTask = await taskRepository.GetTaskAsync(task.Id, token)
             ?? throw new NotFoundException();
