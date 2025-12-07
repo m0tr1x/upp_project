@@ -1,4 +1,4 @@
-﻿using Supabase;
+using Supabase;
 using TaskTracker.Bll.Services;
 using TaskTracker.Bll.Services.Interfaces;
 using TaskTracker.Dal.Repositories;

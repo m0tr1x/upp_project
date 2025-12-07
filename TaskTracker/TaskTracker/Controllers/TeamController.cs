@@ -12,8 +12,26 @@ namespace TaskTracker.Controllers;
 [Route("api/v1/team")]
 public class TeamController([FromServices] ITeamService teamService) : ControllerBase
 {
+    [HttpGet("teams")]
+    [SwaggerOperation("Get all teams")]
+    public async Task<List<V1GetTeamResponse>> V1GetTeams(CancellationToken token)
+    {
+        return await teamService.GetTeams(token);
+    }
+
+    [HttpGet("teams/{teamId}/users")]
+    [SwaggerOperation("Get all users in a team")]
+    public async Task<List<V1GetUsersForTeamResponse>> V1GetUsersByTeamId(
+        int teamId,
+        CancellationToken token)
+    {
+        var users = await teamService.GetUsersForTeam(teamId, token);
+
+        return users;
+    }
+
     [HttpPost("add")]
-    [SwaggerOperation("Добавление команды")]
+    [SwaggerOperation("Creates a new team")]
     public async Task<int> V1CreateTeam(
         [FromBody] V1CreateTeamRequest request,
         CancellationToken token)
@@ -28,7 +46,7 @@ public class TeamController([FromServices] ITeamService teamService) : Controlle
     }
 
     [HttpPost("add/teammate")]
-    [SwaggerOperation("Добавление пользователя в команду")]
+    [SwaggerOperation("Adds a user to a team")]
     public async Task<bool> V1AddTeammateToTeam(
         [FromBody] V1AddTeammateToTeamRequest request,
         CancellationToken token)
@@ -36,21 +54,21 @@ public class TeamController([FromServices] ITeamService teamService) : Controlle
         return await teamService.AddTeammateToTeam(new Teammate
         {
             TeamId = request.TeamId,
-            UserId = request.UserId,
+            Email = request.Email,
             Role = request.Role,
-            JoinedAt = DateTimeOffset.Now
+            JoinedAt = DateTime.Now
         }, token);
     }
 
     [HttpDelete("close")]
-    [SwaggerOperation("Закрытие команды по id")]
+    [SwaggerOperation("Closes a team by ID")]
     public async Task<bool> V1CloseTeam([FromQuery] int id, CancellationToken token)
     {
         return await teamService.CloseTeam(id, token);
     }
 
     [HttpDelete("delete/teammate")]
-    [SwaggerOperation("Удаление пользователя из команды")]
+    [SwaggerOperation("Removes a teammate from a team")]
     public async Task<bool> V1DeleteTeammateFromTeam(
         [FromQuery] int teammateId,
         CancellationToken token)
@@ -59,7 +77,7 @@ public class TeamController([FromServices] ITeamService teamService) : Controlle
     }
 
     [HttpPut("update")]
-    [SwaggerOperation("Удаление пользователя из команды")]
+    [SwaggerOperation("Updates team information")]
     public async Task<bool> V1UpdateTeam(
         [FromBody] V1UpdateTeamRequest request,
         CancellationToken token)

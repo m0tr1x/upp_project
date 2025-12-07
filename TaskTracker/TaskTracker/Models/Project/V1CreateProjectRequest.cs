@@ -11,6 +11,4 @@ public class V1CreateProjectRequest
     public CommonStatus Status { get; set; }
 
     public int TeamId { get; set; }
-
-    public int CreatedByUserId { get; set; }
 }

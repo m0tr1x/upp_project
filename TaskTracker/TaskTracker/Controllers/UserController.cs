@@ -12,14 +12,14 @@ namespace TaskTracker.Controllers;
 public class UserController([FromServices] IUserService userService) : ControllerBase
 {
     [HttpDelete("delete")]
-    [SwaggerOperation("Закрытие задачи по id")]
+    [SwaggerOperation("Deletes a user by ID")]
     public async Task<bool> V1DeleteUser([FromQuery] int id, CancellationToken token)
     {
         return await userService.DeleteUser(id, token);
     }
 
     [HttpGet("get")]
-    [SwaggerOperation("Получение пользователя по id")]
+    [SwaggerOperation("Gets a user by ID")]
     public async Task<V1GetUserResponse> V1GetUser([FromQuery] int id, CancellationToken token)
     {
         var user = await userService.GetUser(id, token);
@@ -35,15 +35,15 @@ public class UserController([FromServices] IUserService userService) : Controlle
         };
     }
 
-    [HttpGet("update")]
-    [SwaggerOperation("Обновление пользователя")]
+    [HttpPut("update")]
+    [SwaggerOperation("Updates a user")]
     public async Task<bool> V1UpdateUser([FromBody] V1UpdateUserRequest request, CancellationToken token)
     {
         return await userService.UpdateUser(request, token);
     }
 
     [HttpGet("get/teammate")]
-    [SwaggerOperation("Получение участника команды по id")]
+    [SwaggerOperation("Gets a team member by ID")]
     public async Task<V1GetTeammateResponse> V1GetTeammate([FromQuery] int teammateId, CancellationToken token)
     {
         var teammate = await userService.GetTeammate(teammateId, token);
@@ -58,8 +58,8 @@ public class UserController([FromServices] IUserService userService) : Controlle
         };
     }
 
-    [HttpGet("update/teammate")]
-    [SwaggerOperation("Обновление участника команды")]
+    [HttpPut("update/teammate")]
+    [SwaggerOperation("Updates a team member")]
     public async Task<bool> V1UpdateTeammate([FromBody] V1UpdateTeammateRequest request, CancellationToken token)
     {
         return await userService.UpdateTeammate(request, token);

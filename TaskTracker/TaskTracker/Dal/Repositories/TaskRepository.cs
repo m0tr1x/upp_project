@@ -20,11 +20,27 @@ public class TaskRepository(Client client) : ITaskRepository
 
     public async Task<bool> AssignOnTeammateAsync(int taskId, int assigneeId, CancellationToken token)
     {
+        var task = await _client
+            .From<DbTask>()
+            .Where(t => t.Id == taskId)
+            .Single(cancellationToken: token);
+
+        if (task == null)
+            return false;
+
         var updatePayload = new DbTask
         {
-            Id = taskId,
-            AssigneeId = assigneeId,
-            UpdatedAt = DateTime.UtcNow
+            Id = task.Id,
+            Title = task.Title,
+            Description = task.Description,
+            Status = task.Status,
+            Priority = task.Priority,
+            DueDate = task.DueDate,
+            ProjectId = task.ProjectId,
+            AssigneeId = assigneeId,      
+            ReporterId = task.ReporterId,
+            CreatedAt = task.CreatedAt,
+            UpdatedAt = DateTime.UtcNow    
         };
 
         var response = await _client
@@ -37,10 +53,23 @@ public class TaskRepository(Client client) : ITaskRepository
 
     public async Task<bool> CloseTaskAsync(int taskId, CancellationToken token)
     {
+        var task = await _client
+            .From<DbTask>()
+            .Where(t => t.Id == taskId)
+            .Single(cancellationToken: token);
+
         var closePayload = new DbTask
         {
             Id = taskId,
+            Title = task.Title,
+            Description = task.Description,
             Status = (int)CommonStatus.Done,
+            Priority = task.Priority,
+            DueDate = task.DueDate,
+            ProjectId = task.ProjectId,
+            AssigneeId = task.AssigneeId,
+            ReporterId = task.ReporterId,
+            CreatedAt = task.CreatedAt,
             UpdatedAt = DateTime.UtcNow
         };
 
