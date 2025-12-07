@@ -54,7 +54,7 @@ public class TeamService(
         }).ToList();
     }
 
-    public async Task<bool> AddTeammateToTeam(Teammate teammate, CancellationToken token)
+    public async Task<int> AddTeammateToTeam(Teammate teammate, CancellationToken token)
     {
         return await teammateRepository.AddTeammateAsync(new DbTeammate
         {
@@ -99,7 +99,7 @@ public class TeamService(
         };
     }
 
-    public async Task<bool> UpdateTeam(V1UpdateTeamRequest team, CancellationToken token)
+    public async Task<int> UpdateTeam(V1UpdateTeamRequest team, CancellationToken token)
     {
         var dbTeam = await teamRepository.GetTeamAsync(team.Id, token)
             ?? throw new NotFoundException();

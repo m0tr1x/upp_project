@@ -1,5 +1,4 @@
-﻿using TaskTracker.Bll.Enum;
-using TaskTracker.Bll.Exceptions;
+﻿using TaskTracker.Bll.Exceptions;
 using TaskTracker.Bll.Models;
 using TaskTracker.Bll.Services.Interfaces;
 using TaskTracker.Dal.Repositories.Interfaces;
@@ -46,7 +45,7 @@ public class UserService(
         };
     }
 
-    public async Task<bool> UpdateTeammate(V1UpdateTeammateRequest teammate, CancellationToken token)
+    public async Task<int> UpdateTeammate(V1UpdateTeammateRequest teammate, CancellationToken token)
     {
         var dbTeammate = await teammateRepository.GetTeammateAsync(teammate.Id, token)
             ?? throw new NotFoundException();
@@ -54,7 +53,7 @@ public class UserService(
         return await teammateRepository.UpdateTeammateAsync(dbTeammate, token);
     }
 
-    public async Task<bool> UpdateUser(V1UpdateUserRequest user, CancellationToken token)
+    public async Task<int> UpdateUser(V1UpdateUserRequest user, CancellationToken token)
     {
         var dbUser = await userRepository.GetUserAsync(user.Id, token)
             ?? throw new NotFoundException();

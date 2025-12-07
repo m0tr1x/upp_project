@@ -69,13 +69,13 @@ public class ProjectRepository(Client client) : IProjectRepository
         return response ?? null;
     }
 
-    public async Task<bool> UpdateProjectAsync(DbProject project, CancellationToken token)
+    public async Task<int> UpdateProjectAsync(DbProject project, CancellationToken token)
     {
         var response = await _client
             .From<DbProject>()
             .Where(p => p.Id == project.Id)
             .Update(project, cancellationToken: token);
 
-        return response.Models.Count > 0;
+        return response.Models.First().Id;
     }
 }

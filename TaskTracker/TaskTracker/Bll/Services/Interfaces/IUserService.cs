@@ -5,7 +5,7 @@ namespace TaskTracker.Bll.Services.Interfaces;
 
 public interface IUserService
 {
-    Task<bool> UpdateUser(V1UpdateUserRequest user, CancellationToken token);
+    Task<int> UpdateUser(V1UpdateUserRequest user, CancellationToken token);
 
     Task<User> GetUser(int userId, CancellationToken token);
 
@@ -13,5 +13,5 @@ public interface IUserService
 
     Task<Teammate> GetTeammate(int teammateId, CancellationToken token);
 
-    Task<bool> UpdateTeammate(V1UpdateTeammateRequest team, CancellationToken token);
+    Task<int> UpdateTeammate(V1UpdateTeammateRequest team, CancellationToken token);
 }

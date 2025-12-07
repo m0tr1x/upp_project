@@ -37,7 +37,7 @@ public class UserController([FromServices] IUserService userService) : Controlle
 
     [HttpPut("update")]
     [SwaggerOperation("Updates a user")]
-    public async Task<bool> V1UpdateUser([FromBody] V1UpdateUserRequest request, CancellationToken token)
+    public async Task<int> V1UpdateUser([FromBody] V1UpdateUserRequest request, CancellationToken token)
     {
         return await userService.UpdateUser(request, token);
     }
@@ -60,7 +60,7 @@ public class UserController([FromServices] IUserService userService) : Controlle
 
     [HttpPut("update/teammate")]
     [SwaggerOperation("Updates a team member")]
-    public async Task<bool> V1UpdateTeammate([FromBody] V1UpdateTeammateRequest request, CancellationToken token)
+    public async Task<int> V1UpdateTeammate([FromBody] V1UpdateTeammateRequest request, CancellationToken token)
     {
         return await userService.UpdateTeammate(request, token);
     }

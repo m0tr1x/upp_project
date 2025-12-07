@@ -6,7 +6,7 @@ public interface IUserRepository
 {
     Task<bool> AddUserAsync(DbUser user, CancellationToken token);
 
-    Task<bool> UpdateUserAsync(DbUser user, CancellationToken token);
+    Task<int> UpdateUserAsync(DbUser user, CancellationToken token);
 
     Task<DbUser?> GetUserAsync(int userId, CancellationToken token);
 

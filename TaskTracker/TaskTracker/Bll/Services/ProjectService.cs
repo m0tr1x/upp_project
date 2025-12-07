@@ -71,7 +71,7 @@ public class ProjectService(IProjectRepository projectRepository, IHttpContextAc
         };
     }
 
-    public async Task<bool> UpdateProject(V1UpdateProjectRequest project, CancellationToken token)
+    public async Task<int> UpdateProject(V1UpdateProjectRequest project, CancellationToken token)
     {
         var dbProject = await projectRepository.GetProjectAsync(project.Id, token)
             ?? throw new NotFoundException();

@@ -47,7 +47,7 @@ public class TeamController([FromServices] ITeamService teamService) : Controlle
 
     [HttpPost("add/teammate")]
     [SwaggerOperation("Adds a user to a team")]
-    public async Task<bool> V1AddTeammateToTeam(
+    public async Task<int> V1AddTeammateToTeam(
         [FromBody] V1AddTeammateToTeamRequest request,
         CancellationToken token)
     {
@@ -78,7 +78,7 @@ public class TeamController([FromServices] ITeamService teamService) : Controlle
 
     [HttpPut("update")]
     [SwaggerOperation("Updates team information")]
-    public async Task<bool> V1UpdateTeam(
+    public async Task<int> V1UpdateTeam(
         [FromBody] V1UpdateTeamRequest request,
         CancellationToken token)
     {

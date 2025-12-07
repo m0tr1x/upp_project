@@ -35,14 +35,14 @@ public class TeamRepository(Client client) : ITeamRepository
         return true;
     }
 
-    public async Task<bool> UpdateTeamAsync(DbTeam team, CancellationToken token)
+    public async Task<int> UpdateTeamAsync(DbTeam team, CancellationToken token)
     {
         var response = await _client
             .From<DbTeam>()
             .Where(t => t.Id == team.Id)
             .Update(team, cancellationToken: token);
 
-        return response.Models.Count > 0;
+        return response.Models.First().Id;
     }
 
     public async Task<DbTeam?> GetTeamAsync(int teamId, CancellationToken token)

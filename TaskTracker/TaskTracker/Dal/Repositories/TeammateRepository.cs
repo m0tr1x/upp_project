@@ -1,4 +1,5 @@
 ﻿using Supabase;
+using TaskTracker.Bll.Exceptions;
 using TaskTracker.Dal.Models;
 using TaskTracker.Dal.Repositories.Interfaces;
 
@@ -19,15 +20,15 @@ public class TeammateRepository(Client client) : ITeammateRepository
     }
 
 
-    public async Task<bool> AddTeammateAsync(DbTeammate teammate, string email, CancellationToken token)
+    public async Task<int> AddTeammateAsync(DbTeammate teammate, string email, CancellationToken token)
     {
         var user = await _client
-        .From<DbUser>()
-        .Where(u => u.Email == email)
-        .Single(cancellationToken: token);
+            .From<DbUser>()
+            .Where(u => u.Email == email)
+            .Single(cancellationToken: token);
 
         if (user == null)
-            return false;
+            throw new NotFoundException();
 
         teammate.UserId = user.Id;
 
@@ -35,7 +36,7 @@ public class TeammateRepository(Client client) : ITeammateRepository
             .From<DbTeammate>()
             .Insert(teammate, cancellationToken: token);
 
-        return response.Models.Count > 0;
+        return response.Models.First().Id;
     }
 
     public async Task<bool> DeactivateAsync(int teammateId, CancellationToken token)
@@ -58,13 +59,13 @@ public class TeammateRepository(Client client) : ITeammateRepository
         return response ?? null;
     }
 
-    public async Task<bool> UpdateTeammateAsync(DbTeammate teammate, CancellationToken token)
+    public async Task<int> UpdateTeammateAsync(DbTeammate teammate, CancellationToken token)
     {
         var response = await _client
             .From<DbTeammate>()
             .Where(t => t.Id == teammate.Id)
             .Update(teammate, cancellationToken: token);
 
-        return response.Models.Count > 0;
+        return response.Models.First().Id;
     }
 }

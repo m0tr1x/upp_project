@@ -13,11 +13,11 @@ public interface ITeamService
 
     Task<Team> GetTeam(int teamId, CancellationToken token);
 
-    Task<bool> UpdateTeam(V1UpdateTeamRequest team, CancellationToken token);
+    Task<int> UpdateTeam(V1UpdateTeamRequest team, CancellationToken token);
 
     Task<bool> CloseTeam(int teamId, CancellationToken token);
 
-    Task<bool> AddTeammateToTeam(Teammate teammate, CancellationToken token);
+    Task<int> AddTeammateToTeam(Teammate teammate, CancellationToken token);
 
     Task<bool> DeleteTeammateFromTeam(int teammateId, CancellationToken token);
 }

@@ -35,7 +35,7 @@ public class ProjectController([FromServices] IProjectService projectService) : 
 
     [HttpPut("update")]
     [SwaggerOperation("Updates a project")]
-    public async Task<bool> V1UpdateProject([FromBody] V1UpdateProjectRequest request, CancellationToken token)
+    public async Task<int> V1UpdateProject([FromBody] V1UpdateProjectRequest request, CancellationToken token)
     {
         return await projectService.UpdateProject(request, token);
     }

@@ -1,5 +1,6 @@
 ﻿using Supabase;
 using TaskTracker.Bll.Enum;
+using TaskTracker.Bll.Exceptions;
 using TaskTracker.Dal.Models;
 using TaskTracker.Dal.Repositories.Interfaces;
 
@@ -56,7 +57,8 @@ public class TaskRepository(Client client) : ITaskRepository
         var task = await _client
             .From<DbTask>()
             .Where(t => t.Id == taskId)
-            .Single(cancellationToken: token);
+            .Single(cancellationToken: token)
+        ?? throw new NotFoundException();
 
         var closePayload = new DbTask
         {

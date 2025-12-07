@@ -37,14 +37,14 @@ public class UserRepository(Client client) : IUserRepository
         return response ?? null;
     }
 
-    public async Task<bool> UpdateUserAsync(DbUser user, CancellationToken token)
+    public async Task<int> UpdateUserAsync(DbUser user, CancellationToken token)
     {
         var response = await _client
             .From<DbUser>()
             .Where(u => u.Id == user.Id)
             .Update(user, cancellationToken: token);
 
-        return response.Models.Count > 0;
+        return response.Models.First().Id;
     }
 
     public async Task<DbUser?> GetUserByEmailAsync(string email, CancellationToken token)
