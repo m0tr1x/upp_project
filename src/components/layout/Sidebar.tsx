@@ -24,7 +24,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const menuItems = [
   { text: 'Дашборд', icon: Dashboard, path: '/dashboard' },
   { text: 'Мои задачи', icon: Task, path: '/tasks' },
-  { text: 'Проекты', icon: Folder, path: '/project' },
+  { text: 'Проекты', icon: Folder, path: '/projects' },
   { text: 'Моя доска', icon: ViewKanban, path: '/myboard' },
   { text: 'Аналитика', icon: Analytics, path: '/analytics' },
   { text: 'Тайм-трекинг', icon: Timer, path: '/timer' },

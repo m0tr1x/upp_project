@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './contexts/AuthContext';
-import Tasks from './pages/Tasks';
 
 // Layouts
 import MainLayout from './components/layout/MainLayout';
@@ -18,11 +17,26 @@ import Dashboard from './pages/Dashboard';
 import TaskPage from './pages/TaskPage'; 
 import MyBoard from './pages/MyBoard';
 import Project from './pages/Project';
+import Tasks from './pages/Tasks';
+import Projects from './pages/Projects';
+import Analytics from './pages/Analytics';
+import Calendar from './pages/Calendar';
+import Timer from './pages/Timer';
+import Settings from './pages/Settings';
 
 const theme = createTheme({
   palette: {
     primary: {
       main: '#EDAB00',
+    },
+  },
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          boxShadow: 'none',
+        },
+      },
     },
   },
 });
@@ -53,16 +67,16 @@ function App() {
             } />
 
             <Route path="/tasks" element={
-            <MainLayout>
-              <Tasks />
-            </MainLayout>
-          } />
+              <MainLayout>
+                <Tasks />
+              </MainLayout>
+            } />
 
             <Route path="/myboard" element={
-            <MainLayout>
-              <MyBoard />
-            </MainLayout>
-          } />
+              <MainLayout>
+                <MyBoard />
+              </MainLayout>
+            } />
             
             {/* Страница задачи - MainLayout с MainHeader и Sidebar */}
             <Route path="/task/:taskId" element={
@@ -70,12 +84,44 @@ function App() {
                 <TaskPage />
               </MainLayout>
             } />
+            
+            {/* СТРАНИЦА ПРОЕКТОВ */}
+            <Route path="/projects" element={
+              <MainLayout>
+                <Projects />
+              </MainLayout>
+            } />
+            
+            {/* маршрут для конкретного проекта */}
+            <Route path="/project/:id" element={
+              <MainLayout>
+                <Project />
+              </MainLayout>
+            } />
 
-            <Route path="/project" element={
-            <MainLayout>
-              <Project />
-            </MainLayout>
-          } />
+            <Route path="/analytics" element={
+  <MainLayout>
+    <Analytics />
+  </MainLayout>
+} />
+
+<Route path="/calendar" element={
+  <MainLayout>
+    <Calendar />
+  </MainLayout>
+} />
+
+<Route path="/timer" element={
+  <MainLayout>
+    <Timer />
+  </MainLayout>
+} />
+
+<Route path="/settings" element={
+  <MainLayout>
+    <Settings />
+  </MainLayout>
+} />
             
           </Routes>
         </Router>
