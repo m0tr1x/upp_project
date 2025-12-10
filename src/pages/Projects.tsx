@@ -78,6 +78,39 @@ interface UpdateProjectRequest {
   teamId?: number;
 }
 
+// Добавьте эти типы данных в начало файла, после существующих типов:
+
+// Типы для команд
+interface Team {
+  id: number;
+  name: string;
+  description?: string;
+  ownerId: number;
+  ownerName?: string;
+  createdAt: string;
+  memberCount?: number;
+}
+
+interface TeamMember {
+  id: number;
+  userId: number;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  role: number; // 0=Member, 1=Manager, 2=Owner
+}
+
+interface CreateTeamRequest {
+  name: string;
+  description?: string;
+}
+
+interface AddMemberRequest {
+  email: string;
+  teamId: number;
+  role: number;
+}
+
 const API_BASE_URL = 'http://213.176.18.15:8080';
 
 const Projects: React.FC = () => {
@@ -103,6 +136,27 @@ const Projects: React.FC = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'warning'>('success');
   const [showArchived, setShowArchived] = useState(false);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
+  // Новые состояния для команд
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [teamMembers, setTeamMembers] = useState<{ [key: number]: TeamMember[] }>({});
+  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+  
+  // Состояния для UI команд
+  const [isCreateTeamDialogOpen, setIsCreateTeamDialogOpen] = useState(false);
+  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState(false);
+  const [isTeamDetailsDialogOpen, setIsTeamDetailsDialogOpen] = useState(false);
+
+  // Данные для форм команд
+  const [newTeamData, setNewTeamData] = useState<CreateTeamRequest>({
+    name: '',
+    description: ''
+  });
+  
+  const [newMemberData, setNewMemberData] = useState<AddMemberRequest>({
+    email: '',
+    teamId: 0,
+    role: 0
+  });
   
   // Данные для форм
   const [newProjectData, setNewProjectData] = useState<CreateProjectRequest>({
@@ -184,31 +238,7 @@ const Projects: React.FC = () => {
     }
   };
   
-  // Основная функция загрузки всех данных
-  const loadAllData = async () => {
-    try {
-      setLoading(prev => ({ ...prev, projects: true, tasks: true }));
-      
-      console.log('🚀 Начинаем загрузку всех данных...');
-      
-      // Загружаем проекты
-      await fetchUserProjectsBasic();
-      
-      // Загружаем задачи
-      await fetchAllTasks();
-      
-      console.log('✅ Все данные успешно загружены');
-      
-    } catch (error) {
-      console.error('❌ Ошибка загрузки данных:', error);
-    } finally {
-      setLoading(prev => ({ 
-        ...prev, 
-        projects: false, 
-        tasks: false
-      }));
-    }
-  };
+  
 
   // Загрузка проектов (только базовые данные)
   const fetchUserProjectsBasic = async () => {
@@ -673,6 +703,443 @@ const Projects: React.FC = () => {
     }
   };
 
+    // ============== КОМАНДЫ ==============
+
+  // Загрузка команд пользователя
+  const fetchUserTeams = async () => {
+    try {
+      const api = getApiInstance();
+      console.log('📡 Запрос команд с сервера...');
+      
+      const response = await api.get('/api/v1/team/teams');
+      
+      if (response.data && Array.isArray(response.data)) {
+        console.log('📥 Получены команды:', response.data);
+        
+        const formattedTeams: Team[] = response.data.map((team: any) => ({
+          id: team.id || 0,
+          name: team.name || 'Без названия',
+          description: team.description || '',
+          ownerId: team.ownerId || 0,
+          createdAt: team.createdAt || new Date().toISOString(),
+          memberCount: 0
+        }));
+        
+        setTeams(formattedTeams);
+        console.log(`✅ Загружено ${formattedTeams.length} команд`);
+        
+        // Загружаем участников для каждой команды
+        formattedTeams.forEach(team => {
+          fetchTeamMembers(team.id);
+        });
+        
+        return formattedTeams;
+      }
+      
+      return [];
+      
+    } catch (error: any) {
+      console.error('❌ Ошибка загрузки команд:', error);
+      
+      if (error.response?.status === 401) {
+        logout();
+        navigate('/login');
+      }
+      
+      return [];
+    }
+  };
+
+  // Загрузка участников команды
+  const fetchTeamMembers = async (teamId: number) => {
+    try {
+      const api = getApiInstance();
+      console.log(`📡 Запрос участников команды ${teamId}...`);
+      
+      const response = await api.get(`/api/v1/team/teams/${teamId}/users`);
+      
+      if (response.data && Array.isArray(response.data)) {
+        const members: TeamMember[] = response.data.map((member: any) => ({
+          id: member.teammateId || 0,
+          userId: member.userId || 0,
+          email: member.email || '',
+          firstName: member.firstName || '',
+          lastName: member.lastName || '',
+          role: 0 // По умолчанию Member
+        }));
+        
+        setTeamMembers(prev => ({
+          ...prev,
+          [teamId]: members
+        }));
+        
+        // Обновляем количество участников в команде
+        setTeams(prevTeams => 
+          prevTeams.map(team => 
+            team.id === teamId 
+              ? { ...team, memberCount: members.length }
+              : team
+          )
+        );
+        
+        console.log(`✅ Загружено ${members.length} участников для команды ${teamId}`);
+      }
+    } catch (error) {
+      console.error(`❌ Ошибка загрузки участников команды ${teamId}:`, error);
+    }
+  };
+
+  // Создание новой команды
+  const handleCreateTeam = async () => {
+    if (!newTeamData.name.trim()) {
+      setSnackbarMessage('Введите название команды!');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    try {
+      const api = getApiInstance();
+      
+      const teamData: CreateTeamRequest = {
+        name: newTeamData.name.trim(),
+        description: newTeamData.description?.trim() || ""
+      };
+
+      console.log('📤 Создаем команду на сервере:', JSON.stringify(teamData, null, 2));
+
+      const response = await api.post('/api/v1/team/add', teamData);
+      const teamId = response.data;
+      
+      if (typeof teamId === 'number' && teamId > 0) {
+        console.log('✅ Команда создана на сервере, ID:', teamId);
+        
+        // Перезагружаем список команд
+        await fetchUserTeams();
+        
+        setIsCreateTeamDialogOpen(false);
+        
+        // Сбрасываем форму
+        setNewTeamData({
+          name: '',
+          description: ''
+        });
+        
+        setSnackbarMessage('Команда успешно создана!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+        
+      } else {
+        throw new Error('Сервер не вернул ID команды');
+      }
+      
+    } catch (error: any) {
+      console.error('❌ Ошибка создания команды:', error);
+      
+      let errorMessage = 'Ошибка создания команды';
+      if (error.response) {
+        if (error.response.status === 400) {
+          errorMessage = 'Некорректные данные. Проверьте заполнение полей.';
+        } else if (error.response.status === 401) {
+          logout();
+          navigate('/login');
+          return;
+        } else if (error.response.status === 409) {
+          errorMessage = 'Команда с таким названием уже существует';
+        } else {
+          errorMessage = error.response.data?.message || errorMessage;
+        }
+      }
+      
+      setSnackbarMessage(errorMessage);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
+  };
+
+  // Добавление участника в команду
+  const handleAddMember = async () => {
+    if (!newMemberData.email.trim()) {
+      setSnackbarMessage('Введите email пользователя!');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    if (!newMemberData.teamId) {
+      setSnackbarMessage('Выберите команду!');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    try {
+      const api = getApiInstance();
+      
+      const memberData: AddMemberRequest = {
+        email: newMemberData.email.trim(),
+        teamId: newMemberData.teamId,
+        role: newMemberData.role || 0
+      };
+
+      console.log('📤 Добавляем участника в команду:', JSON.stringify(memberData, null, 2));
+
+      const response = await api.post('/api/v1/team/add/teammate', memberData);
+
+      if (response.data === true) {
+        console.log('✅ Участник успешно добавлен');
+        
+        // Обновляем список участников команды
+        await fetchTeamMembers(newMemberData.teamId);
+        
+        setIsAddMemberDialogOpen(false);
+        
+        // Сбрасываем форму
+        setNewMemberData({
+          email: '',
+          teamId: 0,
+          role: 0
+        });
+        
+        setSnackbarMessage('Участник успешно добавлен в команду!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+        
+      } else {
+        throw new Error('Сервер не подтвердил добавление участника');
+      }
+      
+    } catch (error: any) {
+      console.error('❌ Ошибка добавления участника:', error);
+      
+      let errorMessage = 'Ошибка добавления участника';
+      if (error.response) {
+        if (error.response.status === 400) {
+          errorMessage = 'Некорректные данные. Проверьте email.';
+        } else if (error.response.status === 401) {
+          logout();
+          navigate('/login');
+          return;
+        } else if (error.response.status === 404) {
+          errorMessage = 'Пользователь с таким email не найден';
+        } else {
+          errorMessage = error.response.data?.message || errorMessage;
+        }
+      }
+      
+      setSnackbarMessage(errorMessage);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
+  };
+
+  // Удаление участника из команды
+  const handleRemoveMember = async (teammateId: number) => {
+    if (!window.confirm('Вы уверены, что хотите удалить этого участника из команды?')) {
+      return;
+    }
+
+    try {
+      const api = getApiInstance();
+      
+      console.log(`🗑️ Удаляем участника ID: ${teammateId}`);
+      
+      const response = await api.delete('/api/v1/team/delete/teammate', {
+        params: { teammateId }
+      });
+      
+      if (response.data === true) {
+        console.log('✅ Участник успешно удален');
+        
+        // Если удаляем из выбранной команды, обновляем список участников
+        if (selectedTeamId) {
+          await fetchTeamMembers(selectedTeamId);
+        }
+        
+        setSnackbarMessage('Участник успешно удален из команды');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+      }
+      
+    } catch (error: any) {
+      console.error('❌ Ошибка удаления участника:', error);
+      
+      let errorMessage = 'Не удалось удалить участника';
+      
+      if (error.response?.status === 401) {
+        logout();
+        navigate('/login');
+        return;
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
+      setSnackbarMessage(errorMessage);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
+  };
+
+  // Удаление команды
+  const handleDeleteTeam = async (teamId: number) => {
+    if (!window.confirm('Вы уверены, что хотите удалить эту команду? Это действие нельзя будет отменить.')) {
+      return;
+    }
+
+    try {
+      const api = getApiInstance();
+      
+      console.log(`🗑️ Удаляем команду ID: ${teamId}`);
+      
+      const response = await api.delete('/api/v1/team/close', {
+        params: { id: teamId }
+      });
+      
+      if (response.data === true) {
+        console.log('✅ Команда успешно удалена');
+        
+        // Обновляем список команд
+        await fetchUserTeams();
+        
+        setSnackbarMessage('Команда успешно удалена');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+      }
+      
+    } catch (error: any) {
+      console.error('❌ Ошибка удаления команды:', error);
+      
+      let errorMessage = 'Не удалось удалить команду';
+      
+      if (error.response?.status === 401) {
+        logout();
+        navigate('/login');
+        return;
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
+      setSnackbarMessage(errorMessage);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
+  };
+
+  // Просмотр деталей команды
+  const handleViewTeamDetails = (teamId: number) => {
+    setSelectedTeamId(teamId);
+    setIsTeamDetailsDialogOpen(true);
+  };
+
+  // Обновить загрузку всех данных
+  const loadAllData = async () => {
+    try {
+      setLoading(prev => ({ ...prev, projects: true, tasks: true }));
+      
+      console.log('🚀 Начинаем загрузку всех данных...');
+      
+      // Загружаем проекты
+      await fetchUserProjectsBasic();
+      
+      // Загружаем задачи
+      await fetchAllTasks();
+      
+      // Загружаем команды
+      await fetchUserTeams();
+      
+      console.log('✅ Все данные успешно загружены');
+      
+    } catch (error) {
+      console.error('❌ Ошибка загрузки данных:', error);
+    } finally {
+      setLoading(prev => ({ 
+        ...prev, 
+        projects: false, 
+        tasks: false
+      }));
+    }
+  };
+
+  // Обновите useEffect для загрузки команд
+  useEffect(() => {
+    if (token) {
+      console.log('🚀 Начало загрузки данных Projects...');
+      loadAllData();
+    } else {
+      navigate('/login');
+    }
+  }, [token]);
+
+  // Обработчики форм для команд
+  const handleTeamFormChange = (field: keyof CreateTeamRequest, value: any) => {
+    setNewTeamData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleMemberFormChange = (field: keyof AddMemberRequest, value: any) => {
+    setNewMemberData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleCreateTeamClick = () => {
+    setIsCreateTeamDialogOpen(true);
+  };
+
+  const handleAddMemberClick = () => {
+    if (teams.length === 0) {
+      setSnackbarMessage('Сначала создайте команду!');
+      setSnackbarSeverity('warning');
+      setSnackbarOpen(true);
+      return;
+    }
+    setIsAddMemberDialogOpen(true);
+  };
+
+  const handleCancelCreateTeam = () => {
+    setIsCreateTeamDialogOpen(false);
+    setNewTeamData({
+      name: '',
+      description: ''
+    });
+  };
+
+  const handleCancelAddMember = () => {
+    setIsAddMemberDialogOpen(false);
+    setNewMemberData({
+      email: '',
+      teamId: teams.length > 0 ? teams[0].id : 0,
+      role: 0
+    });
+  };
+
+  const handleCancelTeamDetails = () => {
+    setIsTeamDetailsDialogOpen(false);
+    setSelectedTeamId(null);
+  };
+
+  // Вспомогательные функции
+  const getRoleLabel = (role: number): string => {
+    switch (role) {
+      case 0: return 'Участник';
+      case 1: return 'Менеджер';
+      case 2: return 'Владелец';
+      default: return 'Участник';
+    }
+  };
+
+  const getRoleColor = (role: number): string => {
+    switch (role) {
+      case 0: return 'default';
+      case 1: return 'primary';
+      case 2: return 'secondary';
+      default: return 'default';
+    }
+  };
+
   // ============== ОБЩИЕ ФУНКЦИИ ==============
 
   const handleToggleArchived = () => {
@@ -1059,28 +1526,186 @@ const Projects: React.FC = () => {
             </Button>
           </Card>
 
-          {/* Блок 4: Пустой блок вместо команд */}
-          <Card sx={{ 
-            border: '1px solid grey', 
-            borderRadius: 5,
-            p: 3,
-            minHeight: 450,
-            display: 'flex',
+          {/* Блок 4: Управление командами */}
+<Card sx={{ 
+  border: '1px solid grey', 
+  borderRadius: 5,
+  p: 3,
+  minHeight: 450
+}}>
+  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+    <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
+      Мои команды ({teams.length})
+    </Typography>
+    <Box sx={{ display: 'flex', gap: 1 }}>
+      <Button
+        variant="contained"
+        size="small"
+        startIcon={<Add />}
+        onClick={handleCreateTeamClick}
+        sx={{
+          backgroundColor: '#EDAB00',
+          color: 'white',
+          textTransform: 'none',
+          fontWeight: 'bold',
+          fontSize: '0.8rem',
+          '&:hover': {
+            backgroundColor: '#d69b00'
+          }
+        }}
+      >
+        Создать
+      </Button>
+      <Button
+        variant="outlined"
+        size="small"
+        startIcon={<Add />}
+        onClick={handleAddMemberClick}
+        sx={{
+          borderColor: '#EDAB00',
+          color: '#EDAB00',
+          textTransform: 'none',
+          fontSize: '0.8rem',
+          '&:hover': {
+            borderColor: '#d69b00'
+          }
+        }}
+      >
+        Добавить участника
+      </Button>
+    </Box>
+  </Box>
+  
+  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    {teams.length === 0 ? (
+      <Box sx={{ textAlign: 'center', p: 4 }}>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+          У вас пока нет команд
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={handleCreateTeamClick}
+          sx={{
+            backgroundColor: '#EDAB00',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: '#d69b00'
+            }
+          }}
+        >
+          Создать первую команду
+        </Button>
+      </Box>
+    ) : (
+      teams.map((team) => (
+        <Card 
+          key={team.id} 
+          sx={{ 
+            border: '1px solid #e0e0e0', 
+            borderRadius: 3,
+            p: 2,
+            cursor: 'pointer',
+            '&:hover': {
+              borderColor: '#EDAB00',
+              boxShadow: '0 0 0 1px #EDAB00'
+            }
+          }}
+          onClick={() => handleViewTeamDetails(team.id)}
+        >
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
             alignItems: 'center',
-            justifyContent: 'center'
+            flexWrap: isMobile ? 'wrap' : 'nowrap',
+            gap: isMobile ? 2 : 0
           }}>
-            <Box sx={{ textAlign: 'center', p: 3 }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#EDAB00', fontSize: '1.1rem', mb: 2 }}>
-                Раздел команд
+            {/* ЛЕВАЯ ЧАСТЬ: Название и описание команды */}
+            <Box sx={{ flex: 1, minWidth: 200 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                {team.name}
               </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                Функционал команд временно недоступен
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Скоро здесь появится управление командами
+              {team.description && (
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.9rem' }}>
+                  {team.description.length > 60 
+                    ? `${team.description.substring(0, 60)}...` 
+                    : team.description}
+                </Typography>
+              )}
+              
+              {/* Статистика команды */}
+              <Box sx={{ mt: 1, display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Chip 
+                  label={`${team.memberCount || 0} участников`}
+                  size="small"
+                  variant="outlined"
+                  sx={{ fontSize: '0.7rem', height: 20 }}
+                />
+                {team.ownerId === user?.id && (
+                  <Chip 
+                    label="Владелец"
+                    size="small"
+                    color="warning"
+                    variant="outlined"
+                    sx={{ fontSize: '0.7rem', height: 20 }}
+                  />
+                )}
+              </Box>
+            </Box>
+            
+            {/* ЦЕНТРАЛЬНАЯ ЧАСТЬ: Дата создания */}
+            <Box sx={{ mx: 2, minWidth: 120 }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                Создана: {formatDate(team.createdAt)}
               </Typography>
             </Box>
-          </Card>
+            
+            {/* ПРАВАЯ ЧАСТЬ: Действия */}
+            <Box sx={{ 
+              display: 'flex', 
+              gap: 1,
+              justifyContent: 'flex-end'
+            }}>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleViewTeamDetails(team.id);
+                }}
+                sx={{
+                  color: '#2196f3',
+                  '&:hover': { backgroundColor: 'rgba(33, 150, 243, 0.1)' }
+                }}
+                title="Просмотреть участников"
+              >
+                <Typography sx={{ fontSize: '0.8rem', fontWeight: 'bold' }}>
+                  {team.memberCount || 0}
+                </Typography>
+              </IconButton>
+              
+              {team.ownerId === user?.id && (
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteTeam(team.id);
+                  }}
+                  sx={{
+                    color: 'error.main',
+                    '&:hover': { backgroundColor: 'rgba(244, 67, 54, 0.1)' }
+                  }}
+                  title="Удалить команду"
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
+          </Box>
+        </Card>
+      ))
+    )}
+  </Box>
+</Card>
         </Box>
       </Box>
 
@@ -1231,6 +1856,271 @@ const Projects: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+            {/* Диалог создания команды */}
+      <Dialog 
+        open={isCreateTeamDialogOpen} 
+        onClose={handleCancelCreateTeam}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+          Создание новой команды
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+            <TextField
+              label="Название команды *"
+              value={newTeamData.name}
+              onChange={(e) => handleTeamFormChange('name', e.target.value)}
+              fullWidth
+              size="small"
+              placeholder="Введите название команды"
+              required
+            />
+
+            <TextField
+              label="Описание команды"
+              value={newTeamData.description}
+              onChange={(e) => handleTeamFormChange('description', e.target.value)}
+              multiline
+              rows={3}
+              fullWidth
+              size="small"
+              placeholder="Опишите команду"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button 
+            onClick={handleCancelCreateTeam}
+            sx={{ 
+              color: 'text.secondary',
+              textTransform: 'none'
+            }}
+          >
+            Отмена
+          </Button>
+          <Button 
+            onClick={handleCreateTeam}
+            variant="contained"
+            disabled={!newTeamData.name.trim()}
+            sx={{ 
+              backgroundColor: '#EDAB00',
+              textTransform: 'none',
+              '&:hover': {
+                backgroundColor: '#d69b00'
+              }
+            }}
+          >
+            Создать команду
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Диалог добавления участника */}
+      <Dialog 
+        open={isAddMemberDialogOpen} 
+        onClose={handleCancelAddMember}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+          Добавление участника в команду
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel>Команда *</InputLabel>
+              <Select
+                value={newMemberData.teamId || ''}
+                label="Команда *"
+                onChange={(e) => handleMemberFormChange('teamId', Number(e.target.value))}
+                required
+              >
+                {teams.map((team) => (
+                  <MenuItem key={team.id} value={team.id}>
+                    {team.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <TextField
+              label="Email пользователя *"
+              value={newMemberData.email}
+              onChange={(e) => handleMemberFormChange('email', e.target.value)}
+              fullWidth
+              size="small"
+              placeholder="Введите email пользователя"
+              required
+            />
+
+            <FormControl fullWidth size="small">
+              <InputLabel>Роль</InputLabel>
+              <Select
+                value={newMemberData.role}
+                label="Роль"
+                onChange={(e) => handleMemberFormChange('role', Number(e.target.value))}
+              >
+                <MenuItem value={0}>Участник</MenuItem>
+                <MenuItem value={1}>Менеджер</MenuItem>
+                <MenuItem value={2}>Владелец</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button 
+            onClick={handleCancelAddMember}
+            sx={{ 
+              color: 'text.secondary',
+              textTransform: 'none'
+            }}
+          >
+            Отмена
+          </Button>
+          <Button 
+            onClick={handleAddMember}
+            variant="contained"
+            disabled={!newMemberData.email.trim() || !newMemberData.teamId}
+            sx={{ 
+              backgroundColor: '#EDAB00',
+              textTransform: 'none',
+              '&:hover': {
+                backgroundColor: '#d69b00'
+              }
+            }}
+          >
+            Добавить участника
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Диалог просмотра участников команды */}
+      <Dialog 
+        open={isTeamDetailsDialogOpen} 
+        onClose={handleCancelTeamDetails}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+          Участники команды
+        </DialogTitle>
+        <DialogContent>
+          {selectedTeamId && (
+            <Box sx={{ mt: 2 }}>
+              {/* Информация о команде */}
+              {(() => {
+                const team = teams.find(t => t.id === selectedTeamId);
+                const members = teamMembers[selectedTeamId] || [];
+                
+                return (
+                  <>
+                    <Box sx={{ mb: 3, p: 2, backgroundColor: '#f5f5f5', borderRadius: 2 }}>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                        {team?.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {team?.description || 'Нет описания'}
+                      </Typography>
+                    </Box>
+                    
+                    {/* Список участников */}
+                    <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold' }}>
+                      Участники ({members.length})
+                    </Typography>
+                    
+                    {members.length === 0 ? (
+                      <Box sx={{ textAlign: 'center', p: 3 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          В команде пока нет участников
+                        </Typography>
+                      </Box>
+                    ) : (
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        {members.map((member) => (
+                          <Box
+                            key={member.id}
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              p: 1.5,
+                              borderBottom: '1px solid #f0f0f0',
+                              '&:last-child': {
+                                borderBottom: 'none'
+                              }
+                            }}
+                          >
+                            <Box sx={{ flex: 1 }}>
+                              <Typography variant="body1" sx={{ fontWeight: '500' }}>
+                                {member.firstName} {member.lastName}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.9rem' }}>
+                                {member.email}
+                              </Typography>
+                            </Box>
+                            
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                              <Chip
+                                label={getRoleLabel(member.role)}
+                                size="small"
+                                sx={{ fontSize: '0.7rem', height: 24 }}
+                              />
+                              
+                              {team?.ownerId === user?.id && member.userId !== user?.id && (
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleRemoveMember(member.id)}
+                                  sx={{
+                                    color: 'error.main',
+                                    '&:hover': { backgroundColor: 'rgba(244, 67, 54, 0.1)' }
+                                  }}
+                                  title="Удалить из команды"
+                                >
+                                  <Delete fontSize="small" />
+                                </IconButton>
+                              )}
+                            </Box>
+                          </Box>
+                        ))}
+                      </Box>
+                    )}
+                  </>
+                );
+              })()}
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button 
+            onClick={handleCancelTeamDetails}
+            sx={{ 
+              color: 'text.secondary',
+              textTransform: 'none'
+            }}
+          >
+            Закрыть
+          </Button>
+          <Button 
+            onClick={() => {
+              handleCancelTeamDetails();
+              handleAddMemberClick();
+            }}
+            variant="outlined"
+            sx={{ 
+              borderColor: '#EDAB00',
+              color: '#EDAB00',
+              textTransform: 'none',
+              '&:hover': {
+                borderColor: '#d69b00'
+              }
+            }}
+          >
+            Добавить участника
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Уведомление */}
       <Snackbar
@@ -1246,6 +2136,8 @@ const Projects: React.FC = () => {
         >
           {snackbarMessage}
         </Alert>
+
+        
       </Snackbar>
     </Box>
   );
