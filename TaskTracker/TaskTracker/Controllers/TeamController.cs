@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TaskTracker.Bll.Models;
@@ -10,7 +11,7 @@ namespace TaskTracker.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/v1/team")]
-public class TeamController([FromServices] ITeamService teamService) : ControllerBase
+public class TeamController([FromServices] ITeamService teamService, IHttpContextAccessor accessor) : ControllerBase
 {
     [HttpGet("teams")]
     [SwaggerOperation("Get all teams")]
@@ -36,11 +37,14 @@ public class TeamController([FromServices] ITeamService teamService) : Controlle
         [FromBody] V1CreateTeamRequest request,
         CancellationToken token)
     {
+        var idStr = accessor.HttpContext?.User.FindFirst("userId")?.Value;
+
+        int.TryParse(idStr, out var userId);
         return await teamService.CreateTeam(new Team
         {
             Name = request.Name,
             Description = request.Description,
-            OwnerId = request.OwnerId,
+            OwnerId = userId,
             CreatedAt = request.CreatedAt,
         }, token);
     }
