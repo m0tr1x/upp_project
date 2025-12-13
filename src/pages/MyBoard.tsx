@@ -90,7 +90,7 @@ const API_BASE_URL = 'http://213.176.18.15:8080';
 // Маппинг статусов из API в UI
 const STATUS_UI_MAP: Record<number, 'Не начато' | 'В процессе' | 'Выполнено'> = {
   0: 'Не начато',
-  1: 'В процессе', 
+  1: 'В процессе',
   2: 'Выполнено'
 };
 
@@ -225,9 +225,9 @@ const SortableTask: React.FC<{ task: Task }> = ({ task }) => {
       </Box>
 
       {/* Нижняя часть - дата создания, приоритет и дедлайн */}
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
         alignItems: 'center',
         mt: 1,
         pt: 0.5,
@@ -240,7 +240,7 @@ const SortableTask: React.FC<{ task: Task }> = ({ task }) => {
         <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem' }}>
           Создано: {formatDate(task.createdAt)}
         </Typography>
-        
+
         {/* Приоритет */}
         <Chip
           label={getPriorityLabel(task.priority)}
@@ -248,7 +248,7 @@ const SortableTask: React.FC<{ task: Task }> = ({ task }) => {
           color={getPriorityColor(task.priority)}
           sx={{ fontSize: '0.6rem', height: '18px' }}
         />
-        
+
         {/* Дедлайн */}
         <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem' }}>
           Дедлайн: {formatDate(task.dueDate)}
@@ -259,7 +259,7 @@ const SortableTask: React.FC<{ task: Task }> = ({ task }) => {
 };
 
 // Компонент пустой области для сброса
-const EmptyDropArea: React.FC<{ 
+const EmptyDropArea: React.FC<{
   status: 'Не начато' | 'В процессе' | 'Выполнено';
   isOver: boolean;
 }> = ({ status, isOver }) => {
@@ -301,8 +301,8 @@ const EmptyDropArea: React.FC<{
         }
       }}
     >
-      <Typography 
-        variant="caption" 
+      <Typography
+        variant="caption"
         color={isOver ? '#EDAB00' : 'text.secondary'}
         sx={{ fontSize: '0.7rem', fontWeight: isOver ? 600 : 400 }}
       >
@@ -336,9 +336,9 @@ const TaskColumn: React.FC<{
   const showHoverEffect = isOver || isColumnOver;
 
   return (
-    <Card 
+    <Card
       ref={setNodeRef}
-      sx={{ 
+      sx={{
         border: showHoverEffect ? '2px solid #EDAB00' : '1px solid grey',
         borderRadius: 5,
         flex: 1,
@@ -352,8 +352,8 @@ const TaskColumn: React.FC<{
         overflow: 'hidden' // Скрываем переполнение
       }}
     >
-      <CardContent sx={{ 
-        display: 'flex', 
+      <CardContent sx={{
+        display: 'flex',
         flexDirection: 'column',
         flex: 1,
         height: '100%',
@@ -361,9 +361,9 @@ const TaskColumn: React.FC<{
         '&:last-child': { pb: 2 }
       }}>
         {/* Заголовок и кнопка */}
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
           mb: 2,
           flexShrink: 0
@@ -399,14 +399,14 @@ const TaskColumn: React.FC<{
         </Box>
 
         {/* Контейнер для задач с вертикальной прокруткой */}
-        <Box sx={{ 
+        <Box sx={{
           flex: 1,
           minHeight: 0, // Критически важно для прокрутки
           overflow: 'hidden', // Скрываем переполнение
           display: 'flex',
           flexDirection: 'column'
         }}>
-          <Box sx={{ 
+          <Box sx={{
             flex: 1,
             overflowY: 'auto', // Вертикальная прокрутка
             overflowX: 'hidden',
@@ -450,7 +450,7 @@ const TaskColumn: React.FC<{
 const MyBoard: React.FC = () => {
   const { user, token, logout } = useAuth();
   const navigate = useNavigate();
-  
+
   // Состояния для задач
   const [tasks, setTasks] = useState<Task[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -458,7 +458,7 @@ const MyBoard: React.FC = () => {
     tasks: true,
     projects: true
   });
-  
+
   // Состояния для UI
   const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -524,38 +524,38 @@ const MyBoard: React.FC = () => {
 
   try {
     setIsLoading(prev => ({ ...prev, tasks: true }));
-    
+
     const api = getApiInstance();
-    
+
     // Сначала пробуем загрузить с сервера
     const response = await api.get('/api/v1/task/get/teammate');
-    
+
     if (response.data?.teammateTasks) {
       const tasksData = response.data.teammateTasks;
-      
+
       // Отладочный вывод для приоритетов
       console.log('🔍 Приоритеты с сервера /teammate:');
       tasksData.forEach((task: any) => {
         console.log(`  ID ${task.id}: priority = ${task.priority} (${typeof task.priority})`);
       });
-      
+
       // Загружаем каждую задачу ОТДЕЛЬНО для получения правильного приоритета
       const detailedTasks: Task[] = [];
-      
+
       for (const task of tasksData) {
         try {
           // Получаем детальную информацию о каждой задаче
           const detailResponse = await api.get('/api/v1/task/get', {
             params: { id: task.id }
           });
-          
+
           const taskDetail = detailResponse.data;
           console.log(`  🔍 Детали задачи ${task.id}:`, {
             teammatePriority: task.priority,
             directPriority: taskDetail.priority,
             match: task.priority === taskDetail.priority
           });
-          
+
           if (taskDetail) {
             detailedTasks.push({
               id: taskDetail.id,
@@ -576,22 +576,22 @@ const MyBoard: React.FC = () => {
           console.warn(`Не удалось получить детали задачи ${task.id}:`, error);
         }
       }
-      
-      console.log('✅ Подробные задачи с приоритетами:', 
+
+      console.log('✅ Подробные задачи с приоритетами:',
         detailedTasks.map(t => ({ id: t.id, priority: t.priority, label: PRIORITY_MAP[t.priority] }))
       );
-      
+
       // Сохраняем в кеш
       localStorage.setItem('user_tasks', JSON.stringify(detailedTasks));
       setTasks(detailedTasks);
-      
+
     } else {
       // Если сервер не вернул задачи, пробуем из кеша
       const cachedTasks = localStorage.getItem('user_tasks');
       if (cachedTasks) {
         const parsedTasks = JSON.parse(cachedTasks);
         console.log('📂 Загружены задачи из кеша:', parsedTasks.length);
-        console.log('🔍 Приоритеты из кеша:', 
+        console.log('🔍 Приоритеты из кеша:',
           parsedTasks.map((t: Task) => ({ id: t.id, priority: t.priority }))
         );
         setTasks(parsedTasks);
@@ -599,10 +599,10 @@ const MyBoard: React.FC = () => {
         setTasks([]);
       }
     }
-    
+
   } catch (error: any) {
     console.error('❌ Ошибка загрузки задач:', error);
-    
+
     // При ошибке загружаем из кеша
     try {
       const cachedTasks = localStorage.getItem('user_tasks');
@@ -617,7 +617,7 @@ const MyBoard: React.FC = () => {
       console.error('Ошибка загрузки из кеша:', cacheError);
       setTasks([]);
     }
-    
+
     if (error.response?.status === 401) {
       logout();
       navigate('/login');
@@ -636,19 +636,19 @@ const MyBoard: React.FC = () => {
 
     try {
       setIsLoading(prev => ({ ...prev, projects: true }));
-      
+
       const api = getApiInstance();
       const response = await api.get('/api/v1/project/projects');
-      
+
       if (response.data) {
         let projectsData = response.data;
-        
+
         if (response.data.projects && Array.isArray(response.data.projects)) {
           projectsData = response.data.projects;
         } else if (!Array.isArray(response.data)) {
           projectsData = [response.data];
         }
-        
+
         const allProjects: Project[] = projectsData.map((project: any) => ({
           id: project.id || 0,
           name: project.name || 'Без названия',
@@ -659,30 +659,30 @@ const MyBoard: React.FC = () => {
           createdAt: project.createdAt || new Date().toISOString(),
           updatedAt: project.updatedAt || new Date().toISOString()
         }));
-        
+
         // Показываем только активные проекты
         const activeProjects = allProjects.filter(project => project.status === 0);
-        
+
         setProjects(activeProjects);
-        
+
         if (activeProjects.length > 0 && !newTaskData.projectId) {
           setNewTaskData(prev => ({
             ...prev,
             projectId: activeProjects[0].id
           }));
         }
-        
+
         console.log(`📊 Проекты: Всего ${allProjects.length}, Активных ${activeProjects.length}`);
       }
     } catch (error: any) {
       console.error('Ошибка загрузки проектов:', error);
-      
+
       if (error.response?.status === 401) {
         logout();
         navigate('/login');
         return;
       }
-      
+
       setProjects([]);
     } finally {
       setIsLoading(prev => ({ ...prev, projects: false }));
@@ -704,7 +704,7 @@ const MyBoard: React.FC = () => {
 
   const handleDragOver = (event: DragOverEvent) => {
     const { over } = event;
-    
+
     if (over) {
       const columnId = over.id;
       if (typeof columnId === 'string') {
@@ -730,7 +730,7 @@ const MyBoard: React.FC = () => {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     console.log('🏁 Конец перетаскивания:', { active: active.id, over: over?.id });
-    
+
     setActiveTask(null);
     setActiveColumn(null);
 
@@ -740,10 +740,10 @@ const MyBoard: React.FC = () => {
     }
 
     const taskId = active.id as number;
-    
+
     let newStatus: 'Не начато' | 'В процессе' | 'Выполнено' = 'Не начато';
     let targetColumnId = '';
-    
+
     if (over.data.current?.status) {
       newStatus = over.data.current.status;
       targetColumnId = over.id as string;
@@ -797,48 +797,49 @@ const MyBoard: React.FC = () => {
 
     try {
       const api = getApiInstance();
-      
+
       const updateData = {
         id: taskId,
         title: taskToUpdate.title,
         description: taskToUpdate.description || "",
         status: UI_STATUS_MAP[newStatus],
         priority: taskToUpdate.priority || 1,
-        dueDate: taskToUpdate.dueDate ? 
-          new Date(taskToUpdate.dueDate).toISOString().split('T')[0] : 
+        dueDate: taskToUpdate.dueDate ?
+          new Date(taskToUpdate.dueDate).toISOString().split('T')[0] :
           null,
         projectId: taskToUpdate.projectId || null
       };
-      
+
       console.log('📤 Отправляем обновление задачи:', JSON.stringify(updateData, null, 2));
-      
+
       const response = await api.put('/api/v1/task/update', updateData);
-      
+
       console.log('✅ Ответ сервера:', response.data);
-      
-      if (response.data === true) {
-        const updatedTasks = tasks.map(task => 
-          task.id === taskId ? { 
-            ...task, 
+
+      // Check if the response indicates success (status 200 and truthy response data)
+      if (response.status === 200) {
+        const updatedTasks = tasks.map(task =>
+          task.id === taskId ? {
+            ...task,
             status: UI_STATUS_MAP[newStatus],
             updatedAt: new Date().toISOString()
           } : task
         );
-        
+
         setTasks(updatedTasks);
-        
+
         setSnackbarMessage(`Задача "${taskToUpdate.title}" перемещена в "${newStatus}"`);
         setSnackbarSeverity('success');
         setSnackbarOpen(true);
-        
+
         console.log('🔄 Локальное состояние обновлено');
       } else {
-        throw new Error('Сервер не подтвердил обновление');
+        throw new Error(`Сервер вернул статус ${response.status}`);
       }
-      
+
     } catch (error: any) {
       console.error('❌ Ошибка обновления задачи:', error);
-      
+
       if (error.response?.status === 401) {
         logout();
         navigate('/login');
@@ -858,15 +859,15 @@ const MyBoard: React.FC = () => {
   // Определяем, над какой колонкой сейчас hover
   const isColumnOver = (columnStatus: 'Не начато' | 'В процессе' | 'Выполнено') => {
     if (!activeColumn) return false;
-    
+
     const columnId = `${columnStatus.toLowerCase().replace(' ', '-')}-column`;
     const emptyId = `empty-${columnStatus}`;
-    
+
     if (typeof activeColumn === 'string') {
-      return activeColumn === columnId || activeColumn === emptyId || 
+      return activeColumn === columnId || activeColumn === emptyId ||
              activeColumn.includes(columnStatus.toLowerCase().replace(' ', '-'));
     }
-    
+
     return false;
   };
 
@@ -898,7 +899,7 @@ const MyBoard: React.FC = () => {
 
     try {
       const api = getApiInstance();
-      
+
       const taskData: any = {
         title: newTaskData.title.trim(),
         description: newTaskData.description?.trim() || "",
@@ -924,16 +925,16 @@ const MyBoard: React.FC = () => {
       console.log('📥 Ответ сервера при создании:', response);
 
       const taskId = response.data;
-      
+
       if (typeof taskId === 'number' && taskId > 0) {
         console.log('✅ Задача создана на сервере, ID:', taskId);
-        
+
         setTimeout(() => {
           loadUserTasks();
         }, 500);
-        
+
         setIsAddTaskDialogOpen(false);
-        
+
         setNewTaskData({
           title: '',
           description: '',
@@ -942,18 +943,18 @@ const MyBoard: React.FC = () => {
           status: 0,
           dueDate: ''
         });
-        
+
         setSnackbarMessage('Задача успешно создана!');
         setSnackbarSeverity('success');
         setSnackbarOpen(true);
-        
+
       } else {
         throw new Error('Сервер не вернул ID задачи');
       }
-      
+
     } catch (error: any) {
       console.error('❌ Ошибка создания задачи:', error);
-      
+
       let errorMessage = 'Ошибка создания задачи';
       if (error.response?.status === 400) {
         errorMessage = 'Некорректные данные. Проверьте заполнение полей.';
@@ -962,7 +963,7 @@ const MyBoard: React.FC = () => {
         navigate('/login');
         return;
       }
-      
+
       setSnackbarMessage(errorMessage);
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
@@ -997,27 +998,36 @@ const MyBoard: React.FC = () => {
     const totalTasks = tasks.length;
     const completedTasksCount = completedTasks.length;
     const pendingTasks = todoTasks.length + inProgressTasks.length;
-    
-    const upcomingDeadlines = tasks
+
+    // Find all deadlines (including today's and overdue)
+    const allDeadlines = tasks
       .filter(task => task.dueDate)
       .map(task => new Date(task.dueDate!).getTime())
-      .filter(time => time > Date.now());
-    
-    const nearestDeadline = upcomingDeadlines.length > 0 
-      ? new Date(Math.min(...upcomingDeadlines))
+      .filter(time => !isNaN(time)); // Ensure we only include valid dates
+
+    const nearestDeadline = allDeadlines.length > 0
+      ? new Date(Math.min(...allDeadlines))
       : null;
-    
-    const timeRemaining = nearestDeadline 
-      ? `${Math.ceil((nearestDeadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} дней`
-      : 'Нет активных дедлайнов';
+
+    let timeRemaining = 'Нет активных дедлайнов';
+    if (nearestDeadline) {
+      const daysDiff = Math.ceil((nearestDeadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+      if (daysDiff > 0) {
+        timeRemaining = `${daysDiff} дней`;
+      } else if (daysDiff === 0) {
+        timeRemaining = 'Сегодня';
+      } else {
+        timeRemaining = `Просрочен на ${Math.abs(daysDiff)} дней`;
+      }
+    }
 
     return {
-      createdDate: new Date().toLocaleDateString('ru-RU', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
+      createdDate: new Date().toLocaleDateString('ru-RU', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       }),
-      deadline: nearestDeadline 
+      deadline: nearestDeadline
         ? nearestDeadline.toLocaleDateString('ru-RU')
         : 'Не указан',
       timeRemaining: timeRemaining,
@@ -1025,7 +1035,7 @@ const MyBoard: React.FC = () => {
       totalTasks: totalTasks,
       completedTasks: completedTasksCount,
       pendingTasks: pendingTasks,
-      completionRate: totalTasks > 0 
+      completionRate: totalTasks > 0
         ? Math.round((completedTasksCount / totalTasks) * 100)
         : 0
     };
@@ -1054,11 +1064,11 @@ const MyBoard: React.FC = () => {
 
   if (isLoading.projects) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
       }}>
         <CircularProgress sx={{ color: '#EDAB00' }} />
       </Box>
@@ -1066,21 +1076,21 @@ const MyBoard: React.FC = () => {
   }
 
   return (
-    <Box sx={{ 
-      p: 3, 
+    <Box sx={{
+      p: 3,
       flex: 1,
       pt: 1
     }}>
       {/* Заголовок страницы */}
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 1 }}> 
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 1 }}>
         Моя доска
       </Typography>
 
       {/* Верхний ряд - 3 блока */}
       <Box sx={{ display: 'flex', gap: 3, mb: 3 }}>
-        
+
         {/* Первый блок - Информация о доске */}
-        <Card sx={{ 
+        <Card sx={{
           border: '1px solid grey',
           borderRadius: 5,
           flex: 1
@@ -1089,7 +1099,7 @@ const MyBoard: React.FC = () => {
             <Typography variant="h6" gutterBottom sx={{ color: '#EDAB00', mb: 3 }}>
               Информация о доске
             </Typography>
-            
+
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {/* Дата добавления */}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1125,7 +1135,7 @@ const MyBoard: React.FC = () => {
         </Card>
 
         {/* Второй блок - Описание доски */}
-        <Card sx={{ 
+        <Card sx={{
           border: '1px solid grey',
           borderRadius: 5,
           flex: 2
@@ -1141,7 +1151,7 @@ const MyBoard: React.FC = () => {
         </Card>
 
         {/* Третий блок - Статистика задач */}
-        <Card sx={{ 
+        <Card sx={{
           border: '1px solid grey',
           borderRadius: 5,
           flex: 1
@@ -1150,7 +1160,7 @@ const MyBoard: React.FC = () => {
             <Typography variant="h6" gutterBottom sx={{ color: '#EDAB00', mb: 3 }}>
               Статистика
             </Typography>
-            
+
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {/* Все задачи */}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1263,9 +1273,9 @@ const MyBoard: React.FC = () => {
                   sx={{ ml: 1, fontSize: '0.6rem', height: '20px' }}
                 />
               </Box>
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
                 alignItems: 'center',
                 mt: 1,
                 pt: 0.5,
@@ -1287,8 +1297,8 @@ const MyBoard: React.FC = () => {
                   Дедлайн: {activeTask.dueDate ? new Date(activeTask.dueDate).toLocaleDateString('ru-RU') : 'Не указан'}
                 </Typography>
               </Box>
-              <Box sx={{ 
-                display: 'flex', 
+              <Box sx={{
+                display: 'flex',
                 justifyContent: 'center',
                 mt: 0.5,
                 pt: 0.5,
@@ -1305,8 +1315,8 @@ const MyBoard: React.FC = () => {
       </DndContext>
 
       {/* Диалог добавления задачи */}
-      <Dialog 
-        open={isAddTaskDialogOpen} 
+      <Dialog
+        open={isAddTaskDialogOpen}
         onClose={handleCancelAddTask}
         maxWidth="md"
         fullWidth
@@ -1405,20 +1415,20 @@ const MyBoard: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
-          <Button 
+          <Button
             onClick={handleCancelAddTask}
-            sx={{ 
+            sx={{
               color: 'text.secondary',
               textTransform: 'none'
             }}
           >
             Отмена
           </Button>
-          <Button 
+          <Button
             onClick={handleSaveNewTask}
             variant="contained"
             disabled={!newTaskData.title.trim() || !newTaskData.projectId}
-            sx={{ 
+            sx={{
               backgroundColor: '#EDAB00',
               textTransform: 'none',
               '&:hover': {
@@ -1438,8 +1448,8 @@ const MyBoard: React.FC = () => {
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert 
-          onClose={handleSnackbarClose} 
+        <Alert
+          onClose={handleSnackbarClose}
           severity={snackbarSeverity}
           sx={{ width: '100%' }}
         >
